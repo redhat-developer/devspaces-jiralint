@@ -1,4 +1,4 @@
-Experiment where I'm trying to use Jenkins for early warnings/error detection in jiras and other jira experiments.
+This repo contains utilities that use Jenkins for early warnings/error detection in jiras and other jira tools.
 
 README     	     this file
 render-testcase.py   takes a report.json to render jira query results into junit.xml test reports   
