@@ -157,6 +157,12 @@ def map_thym(version):
     else:
         return NO_VERSION
 
+def map_tycho(version):
+    if re.match(r"0.27.0", version):
+        return re.sub(r"0.27.0", r"Neon.2 (4.6)", version)
+    else:
+        return NO_VERSION
+
 def map_linuxtools(version):
     if re.match(r"4.0(.*)", version):
         return re.sub(r"4.0(.*)", r"Mars (4.5)", version)
@@ -217,7 +223,8 @@ bzprod_version_map = {
     "Platform" : map_platform,
     "Linux Tools" : map_linuxtools,
     "m2e" : map_m2e,
-    "Thym" : map_thym
+    "Thym" : map_thym,
+    "Tycho" : map_tycho
     }
     
 def bz_to_jira_version(options, bug):
