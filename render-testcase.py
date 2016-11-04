@@ -206,7 +206,8 @@ def render(issue_type, issue_description, jira_env, issues, jql, options, email_
             for i, assignee_email in enumerate(emails_to_send):
                 problem_count = str(len(emails_to_send[assignee_email]))
                 # note: python uses `value if condition else otherValue`, which is NOT the same as `condition ? value : otherValue`
-                entry = ("Prepare (but do not send)" if options.dryrun else "Send") + " email with " + problem_count + " issue(s) to: " + (options.toemail + " (not " + assignee_email + ")" if options.toemail else assignee_email)
+                entry = ("Prepare (but do not send)" if options.dryrun else "Send") + " email with " + problem_count + \
+                    " issue(s) to: " + (options.toemail + " (not " + assignee_email + ")" if options.toemail else assignee_email)
                 print entry
                 log = log + entry + "\n\n"
                 message = ''
@@ -216,8 +217,10 @@ def render(issue_type, issue_description, jira_env, issues, jql, options, email_
                     # print emails_to_send[assignee_email][jira_key]['recipients']
 
                 # wrap generated message w/ header and footer
-                message = "This email is the result of a query to locate stalled/invalid jiras. Please fix them. Thanks!\n\n " + message
-                message = message + "\n\nQuery used: "  + options.jiraserver + "/issues/?jql=" + urllib.quote_plus(jql) + "\n"
+                message = "This email is the result of a query to locate stalled/invalid jiras. Please fix them. Thanks!" + \
+                    "\n\nGlobal Query:   "  + options.jiraserver + "/issues/?jql=" + urllib.quote_plus(jql) +  \
+                    "\n\nPersonal Query: "  + options.jiraserver + "/issues/?jql=" + urllib.quote_plus(jql + " AND assignee = currentUser()") + \
+                    "\n\n----------------------------\n\n" + message
                 # send to yourself w/ --toemail override, or else send to actual recipient
                 # note: python uses `value if condition else otherValue`, which is NOT the same as `condition ? value : otherValue`
                 mailsend (options.smtphost, 
