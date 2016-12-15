@@ -164,14 +164,18 @@ def map_tycho(version):
         return NO_VERSION
 
 def map_linuxtools(version):
-    if re.match(r"4.0(.*)", version):
-        return re.sub(r"4.0(.*)", r"Mars (4.5)", version)
-    elif re.match(r"4.([123]).(.*)", version):
-        return re.sub(r"4.([123]).(.*)", r"Mars.\1 (4.5)", version)
+    if re.match(r"6.0.0", version):
+        return re.sub(r"6.0.0", r"Oxygen (4.7)", version)
+    elif re.match(r"6.([123]).0", version):
+        return re.sub(r"6.([123]).0", r"Oxygen.\1 (4.7)", version)
     elif re.match(r"5.0.0", version):
         return re.sub(r"5.0.0", r"Neon (4.6)", version)
     elif re.match(r"5.([123]).0", version):
         return re.sub(r"5.([123]).0", r"Neon.\1 (4.6)", version)
+    elif re.match(r"4.0(.*)", version):
+        return re.sub(r"4.0(.*)", r"Mars (4.5)", version)
+    elif re.match(r"4.([123]).(.*)", version):
+        return re.sub(r"4.([123]).(.*)", r"Mars.\1 (4.5)", version)
     else:
         return NO_VERSION
 
