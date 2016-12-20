@@ -220,12 +220,24 @@ def map_m2e(version):
     else:
         return NO_VERSION
 
+# Eclipse Marketplace Client (MPC)
+def map_mpc(version):
+    if re.match(r"1.6\.(.*)", version):
+        return re.sub(r"1.6(.*)",     r"Oxygen.\1 (4.7)", version)
+    elif re.match(r"1.5.4", version):
+        return re.sub(r"1.5.4",       r"Neon.3 (4.6)", version)
+    elif re.match(r"1.5\.(.*)", version):
+        return re.sub(r"1.5\.(.*)",   r"Neon.\1 (4.6)", version)
+    else:
+        return NO_VERSION
+
 bzprod_version_map = {
     #"WTP Incubator" : (lambda version: NO_VERSION), // no obvious mapping available for the Target Milestones
     "JSDT" : map_webtools,
     "WTP Source Editing" : map_webtools,
     "Platform" : map_platform,
     "Linux Tools" : map_linuxtools,
+    "MPC" : map_mpc,
     "m2e" : map_m2e,
     "Thym" : map_thym,
     "Tycho" : map_tycho
