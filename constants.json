@@ -2,27 +2,29 @@
     "jbide_master_versions": {
 	"function": "listVersions",
 	"project": "JBIDE",
-	"pattern": "4.4.(?!x).*"
+	"pattern": "4.5.(?!x).*"
 	},
     "jbds_master_versions": {
 	"function": "listVersions",
 	"project": "JBDS",
-	"pattern": "10...(?!x).*"
+	"pattern": "11...(?!x).*"
 	},
+
     "jbide_maint_versions": {
 	"function": "listVersions",
 	"project": "JBIDE",
-	"pattern": "4.3.(?!x).*"
+	"pattern": "4.4.(?!x).*"
 	},
     "jbds_maint_versions": {
 	"function": "listVersions",
 	"project": "JBDS",
-	"pattern": "9...(?!x).*"
+	"pattern": "10...(?!x).*"
 	},
+
     "jbide_next_maint_versions": {
 	"function": "listVersions",
 	"project": "JBIDE",
-	"pattern": "4.3.(?!x).*",
+	"pattern": "4.4.(?!x).*",
         "hasStartDate": true,
 	"released": false,
 	"index": 0
@@ -30,15 +32,16 @@
     "jbds_next_maint_versions": {
 	"function": "listVersions",
 	"project": "JBDS",
-	"pattern": "9...(?!x).*",
+	"pattern": "10...(?!x).*",
         "hasStartDate": true,
 	"released": false,
 	"index": 0
     },
+
     "jbide_next_master_versions": {
 	"function": "listVersions",
 	"project": "JBIDE",
-	"pattern": "4.4.(?!x).*",
+	"pattern": "4.5.(?!x).*",
         "hasStartDate": true,
 	"released": false,
 	"codefrozen": false,
@@ -47,12 +50,13 @@
     "jbds_next_master_versions": {
 	"function": "listVersions",
 	"project": "JBDS",
-	"pattern": "10...(?!x).*",
+	"pattern": "11...(?!x).*",
         "hasStartDate": true,
 	"released": false,
 	"codefrozen": false,
 	"index": 0
     },
+
     "jbds_bucket_versions": {
 	"function": "listVersions",
 	"project": "JBDS",
@@ -63,29 +67,31 @@
 	"project": "JBIDE",
 	"pattern": ".*.x$|LATER"
     },
+
     "jbide_freeze_versions": {
 	"function": "listVersions",
 	"project": "JBIDE",
-	"pattern": "4.2.*|4.3.*|4.4.*",
+	"pattern": "4.3.*|4.4.*|4.5.*",
 	"codefrozen": true
     },
     "jbds_freeze_versions": {
 	"function": "listVersions",
 	"project": "JBDS",
-	"pattern": "8.1.*|9.*|10.*",
+	"pattern": "9.*|10.*|11.*",
 	"codefrozen": true
     },
+
     "jbide_latest_freeze_versions": {
 	"function": "listVersions",
 	"project": "JBIDE",
-	"pattern": "4.2.*|4.3.*|4.4.*",
+	"pattern": "4.3.*|4.4.*|4.5.*",
 	"codefrozen": true,
 	"index" : -1
     },
     "jbds_latest_freeze_versions": {
 	"function": "listVersions",
 	"project": "JBDS",
-	"pattern": "8.1.*|9.*|10.*",
+	"pattern": "9.*|10.*|11.*",
 	"codefrozen": true,
 	"index" : -1
     }
