@@ -204,6 +204,8 @@ def map_webtools(version):
         return re.sub(r"3.9", r"Oxygen (4.7)", version)
     elif re.match(r"3.8.0", version):
         return re.sub(r"3.8.0", r"Neon (4.6)", version)
+    elif re.match(r"3.8.2", version):
+        return re.sub(r"3.8.2", r"Neon.3 (4.6)", version)
     elif re.match(r"3.8\.([1-9])", version):
         return re.sub(r"3.8\.([1-9])", r"Neon.\1 (4.6)", version)
     elif re.match(r"3.8 (.*)", version):
@@ -235,6 +237,7 @@ bzprod_version_map = {
     #"WTP Incubator" : (lambda version: NO_VERSION), // no obvious mapping available for the Target Milestones
     "JSDT" : map_webtools,
     "WTP Source Editing" : map_webtools,
+    "WTP Common Tools" : map_webtools,
     "Platform" : map_platform,
     "Linux Tools" : map_linuxtools,
     "MPC" : map_mpc,
