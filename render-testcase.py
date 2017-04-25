@@ -63,7 +63,6 @@ def mailsend (smtphost, from_email, to_email, subject, message, recipients_list,
         server.sendmail(from_email, recipients_list, msg)
     server.close()
 
-
 def render(issue_type, issue_description, jira_env, issues, jql, options, email_addresses, components):
         
     doc = Document()
@@ -98,6 +97,9 @@ def render(issue_type, issue_description, jira_env, issues, jql, options, email_
                     components[component['id']] = component_data
                     
                 component_name = str(component_data['name'])
+                if not 'lead' in component_data.keys():
+                    raise Exception('[ERROR] No component lead set for component = ' + component_name + ' on issue ' + jira_key + 
+                        '.\n\n[ERROR] Contact an administrator to update https://issues.jboss.org/plugins/servlet/project-config/JBIDE/components')
                 component_lead_name = str(component_data['lead']['name'])
                 component_lead_names += "-" + xstr(component_lead_name)
                 component_lead_email = fetch_email(component_lead_name, options.unassignedjiraemail, email_addresses)
