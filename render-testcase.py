@@ -213,7 +213,10 @@ def render(issue_type, issue_description, jira_env, issues, jql, options, email_
                 print entry
                 log = log + entry + "\n\n"
                 message = ''
+                o = urlparse(v['self'])
+                url = o.scheme + "://" + o.netloc + "/browse/"
                 for j, jira_key in enumerate(emails_to_send[assignee_email]):
+                    print " * " + url + jira_key
                     message = message + emails_to_send[assignee_email][jira_key]['message']
                     log = log + emails_to_send[assignee_email][jira_key]['message']
                     # print emails_to_send[assignee_email][jira_key]['recipients']
