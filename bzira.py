@@ -61,7 +61,7 @@ def lookup_proxy(options, bug):
     elif (count == 1):
         return data['issues'][0]
     else:
-        print "[WARN] Multiple issues found for " + str(bug.id)
+        print "[WARNING] Multiple issues found for " + str(bug.id)
         print data['issues']
         return 
 
@@ -94,22 +94,27 @@ def create_proxy_jira_dict(options, bug):
     ## check version exists, if not don't create proxy jira.
     if (not next((v for v in versions if jiraversion == v.name), None)):
         if (jiraversion and jiraversion != NO_VERSION): 
-            print red + "[ERROR] Version '" + green + jiraversion + norm + "' mapped from '" + green + bug.target_milestone + red + "' not found in " + green + ECLIPSE_PROJECT + red + ". Please create it or fix the mapping. " + blue + "Bug: " + str(bug) + norm
-
             if (options.autocreate):
                 accept = "Y"
             else:
                 accept = raw_input("Create " + jiraversion + " ?")
             if accept.capitalize() in "Y":
+                print norm + "[WARNING] Version '" + green + jiraversion + norm + "' mapped from '" + \
+                    green + bug.target_milestone + norm + "' not found in " + green + ECLIPSE_PROJECT + \
+                    norm + ". Please create it or fix the mapping. " + blue + "Bug: " + str(bug) + norm
                 newv = jira.create_version(jiraversion, ECLIPSE_PROJECT)
                 versions = jira.project_versions(ECLIPSE_PROJECT)
                 jiraversion = newv.name
             else:
+                print red + "[ERROR] Version '" + green + jiraversion + norm + "' mapped from '" + \
+                	green + bug.target_milestone + red + "' not found in " + green + ECLIPSE_PROJECT + \
+                	red + ". Please create it or fix the mapping. " + blue + "Bug: " + str(bug) + norm
                 missing_versions[jiraversion].add(bug)
                 return
             
         if (not jiraversion):
-            print red + "[ERROR] No mapping for '" + green + bug.target_milestone + red + "'. Please fix the mapping. " + blue + "Bug: " + str(bug) + norm 
+            print red + "[ERROR] No mapping for '" + green + bug.target_milestone + red \
+            	+ "'. Please fix the mapping. " + blue + "Bug: " + str(bug) + norm 
             jiraversion = "Missing Map"
             return
             
