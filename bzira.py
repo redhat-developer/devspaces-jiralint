@@ -18,15 +18,6 @@ httpdebug = False
 
 NO_VERSION = "!_NO_VERSION_!"
 
-## Jira Project used for tracking Red Hat Bugzillas (RHBZ) or Eclipse Releast Train JIRAs
-JIRA_PROJECT = "ERT" # or RHBZ
-
-## Issue prefix for linked to upstream Red Hat or Eclipse Bugzilla (RHBZ / EBZ)
-ISSUE_PREFIX = "EBZ" # or RHBZ
-
-## bugzilla server to query
-bzserver = "https://bugs.eclipse.org/bugs/" # or "https://bugzilla.redhat.com/"
-
 def parse_options():
     usage = "Usage: %prog -u <jirauser> -p <jirapwd> \nCreates proxy issues for bugzilla issues in jira"
 
@@ -34,9 +25,9 @@ def parse_options():
     parser.add_option("-u", "--user", dest="jirauser", help="jirauser")
     parser.add_option("-p", "--pwd", dest="jirapwd", help="jirapwd")
     parser.add_option("-s", "--server", dest="jiraserver", default="https://issues.stage.jboss.org", help="Jira instance")
-    parser.add_option("-B", "--bzserver", dest="bzserver", default="https://bugzilla.redhat.com/", help="BZ instance, trailing slash")
-    parser.add_option("-I", "--issue-prefix", dest="ISSUE_PREFIX", default="RHBZ", help="prefix to use on issue links: RHBZ, EBZ, etc.")
-    parser.add_option("-J", "--jira-project", dest="JIRA_PROJECT", default="RHBZ", help="project in JIRA: RHBZ, ERT, etc.")
+    parser.add_option("-B", "--bzserver", dest="bzserver", default="https://bugs.eclipse.org/bugs/", help="BZ instance, eg., https://bugs.eclipse.org/bugs/ or https://bugzilla.redhat.com/")
+    parser.add_option("-I", "--issue-prefix", dest="issue_prefix", default="EBZ", help="prefix to use on issue links: RHBZ, EBZ, etc.")
+    parser.add_option("-J", "--jira-project", dest="jira_project", default="ERT", help="project in JIRA: RHBZ, ERT, etc.")
     parser.add_option("-d", "--dry-run", dest="dryrun", action="store_true", help="run without creating proxy issues")
     parser.add_option("-v", "--verbose", dest="verbose", action="store_true", help="more verbose console output")
     parser.add_option("-a", "--auto-create", dest="autocreate", action="store_true", help="if set, automatically create components and versions as needed")
@@ -46,7 +37,20 @@ def parse_options():
     parser.add_option("-C", "--color", dest="colorconsole", action="store_true", help="if set, show colours in console with bash escapes")
     parser.add_option("-H", "--html-color", dest="htmlcolorconsole", action="store_true", help="if set, show colours in console with html")
 
+    parser.add_option("-E", "--eclipse-bugzilla", dest="eclipse_bugzilla_defaults", action="store_true", help="shortcut for Eclipse Bugzilla defaults")
+    parser.add_option("-R", "--redhat-bugzilla", dest="redhat_bugzilla_defaults", action="store_true", help="shortcut for Red Hat Bugzilla defaults")
+
     (options, args) = parser.parse_args()
+
+    if options.eclipse_bugzilla_defaults:
+        options.bzserver="https://bugs.eclipse.org/bugs/"
+        options.issue_prefix="EBZ"
+        options.jira_project="ERT"
+
+    if options.redhat_bugzilla_defaults:
+        options.bzserver="https://bugzilla.redhat.com/"
+        options.issue_prefix="RHBZ"
+        options.jira_project="RHBZ"
 
     if (not options.jirauser or not options.jirapwd) and "userpass" in os.environ:
         # check if os.environ["userpass"] is set and use that if defined
@@ -92,7 +96,7 @@ transitionmap = {
     
 def lookup_proxy(options, bug):
     #TODO should keep a local cache from BZ->JIRA to avoid constant querying
-    payload = {'jql': 'project = ' + JIRA_PROJECT + ' and summary ~ \'' + ISSUE_PREFIX + '#' + str(bug.id) +'\'', 'maxResults' : 5}
+    payload = {'jql': 'project = ' + options.jira_project + ' and summary ~ \'' + options.issue_prefix + '#' + str(bug.id) +'\'', 'maxResults' : 5}
     data = shared.jiraquery(options, "/rest/api/latest/search?" + urllib.urlencode(payload))
     count = len(data['issues'])
     if (count == 0):
@@ -113,9 +117,9 @@ def lookup_remotelink(options, jira_id):
     else:
         return
 
-# set up issue link to ISSUE_PREFIX = RHBZ / EBZ
+# set up issue link to options.issue_prefix = RHBZ / EBZ
 def create_remotelink(jira_id, bug):
-    link_dict = { "title": ISSUE_PREFIX + " #" + str(bug.id), "url": bug.weburl }
+    link_dict = { "title": options.issue_prefix + " #" + str(bug.id), "url": bug.weburl }
     if (options.verbose):
         print "[DEBUG] Add remotelink: " + str(link_dict)
     jira.add_simple_link(jira_id, object=link_dict)
@@ -139,14 +143,14 @@ def create_proxy_jira_dict(options, bug):
                 accept = raw_input("Create " + jiraversion + " ?")
             if accept.capitalize() in "Y":
                 print norm + "[WARNING] Version '" + green + jiraversion + norm + "' mapped from '" + \
-                    green + bug.target_milestone + norm + "' not found in " + green + JIRA_PROJECT + \
+                    green + bug.target_milestone + norm + "' not found in " + green + options.jira_project + \
                     norm + ". Please create it or fix the mapping. " + blue + "Bug: " + str(bug) + norm
-                newv = jira.create_version(jiraversion, JIRA_PROJECT)
-                versions = jira.project_versions(JIRA_PROJECT)
+                newv = jira.create_version(jiraversion, options.jira_project)
+                versions = jira.project_versions(options.jira_project)
                 jiraversion = newv.name
             else:
                 print red + "[ERROR] Version '" + green + jiraversion + norm + "' mapped from '" + \
-                    green + bug.target_milestone + red + "' not found in " + green + JIRA_PROJECT + \
+                    green + bug.target_milestone + red + "' not found in " + green + options.jira_project + \
                     red + ". Please create it or fix the mapping. " + blue + "Bug: " + str(bug) + norm
                 missing_versions[jiraversion].add(bug)
                 return
@@ -171,8 +175,8 @@ def create_proxy_jira_dict(options, bug):
             accept = raw_input("Create component: " + bug.product + " ?")
                 
         if accept.capitalize() in "Y":
-            comp = jira.create_component(bug.product, JIRA_PROJECT)
-            components = jira.project_components(JIRA_PROJECT)
+            comp = jira.create_component(bug.product, options.jira_project)
+            components = jira.project_components(options.jira_project)
 
 
     labels=['bzira']
@@ -181,8 +185,8 @@ def create_proxy_jira_dict(options, bug):
         labels.append(bug.target_milestone.replace(" ", "_")) # label not allowed to have spaces.
 
     issue_dict = {
-        'project' : { 'key': JIRA_PROJECT },
-        'summary' : bug.summary + ' [' + ISSUE_PREFIX + '#' + str(bug.id) + "]",
+        'project' : { 'key': options.jira_project },
+        'summary' : bug.summary + ' [' + options.issue_prefix + '#' + str(bug.id) + "]",
         'description' : bug.getcomments()[0]['text'], # TODO this loads all comments...everytime. probably should wait to do this once it is absolutely needed.
         'issuetype' : { 'name' : 'Task' }, # No notion of types in bugzilla just taking the most generic/non-specifc in jira
         'priority' : { 'name' : bz_to_jira_priority(options, bug) },
@@ -451,7 +455,7 @@ def process(bug, bugs):
             bugs.append(newissue)
             print "[INFO] Created " + green + options.jiraserver + "/browse/" + newissue.key + norm
 
-            # Setup issue link to ISSUE_PREFIX = RHBZ / EBZ
+            # Setup issue link to options.issue_prefix = RHBZ / EBZ
             create_remotelink(newissue.key,bug)
             # Check for transition needed
             jstatus = bz_to_jira_status(options, bug)
@@ -498,12 +502,6 @@ if (options.bzserver):
     if not bzserver.endswith("/"):
         bzserver=bzserver+"/"
 basequery = bzserver + "buglist.cgi?status_whiteboard=RHT"
-
-if (options.JIRA_PROJECT):
-    JIRA_PROJECT=options.JIRA_PROJECT
-
-if (options.ISSUE_PREFIX):
-    ISSUE_PREFIX=options.ISSUE_PREFIX
 
 if (options.colorconsole):
     # colours for console
@@ -571,8 +569,8 @@ if (len(issues) > 0):
     jira = JIRA(options={'server':options.jiraserver}, basic_auth=(options.jirauser, options.jirapwd))
 
     #TODO should get these data into something more structured than individual global variables.
-    versions = jira.project_versions(JIRA_PROJECT)
-    components = jira.project_components(JIRA_PROJECT)
+    versions = jira.project_versions(options.jira_project)
+    components = jira.project_components(options.jira_project)
 
     if (options.verbose):
         print "[DEBUG] " + "Found " + yellow + str(len(components)) + norm + " components and " + yellow + str(len(versions)) + norm + " versions in JIRA"
