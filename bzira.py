@@ -1,7 +1,7 @@
 import bugzilla
 from jira.client import JIRA, JIRAError
 from optparse import OptionParser
-import urllib
+import urllib, sys, os
 import pprint
 from common import shared
 import pickle
@@ -18,8 +18,47 @@ httpdebug = False
 
 NO_VERSION = "!_NO_VERSION_!"
 
-## Jira Project used for the Eclipse release train 
-ECLIPSE_PROJECT = "ERT"
+## Jira Project used for tracking Red Hat Bugzillas (RHBZ) or Eclipse Releast Train JIRAs
+JIRA_PROJECT = "ERT" # or RHBZ
+
+## Issue prefix for linked to upstream Red Hat or Eclipse Bugzilla (RHBZ / EBZ)
+ISSUE_PREFIX = "EBZ" # or RHBZ
+
+## bugzilla server to query
+bzserver = "https://bugs.eclipse.org/bugs/" # or "https://bugzilla.redhat.com/"
+
+def parse_options():
+    usage = "Usage: %prog -u <jirauser> -p <jirapwd> \nCreates proxy issues for bugzilla issues in jira"
+
+    parser = OptionParser(usage)
+    parser.add_option("-u", "--user", dest="jirauser", help="jirauser")
+    parser.add_option("-p", "--pwd", dest="jirapwd", help="jirapwd")
+    parser.add_option("-s", "--server", dest="jiraserver", default="https://issues.stage.jboss.org", help="Jira instance")
+    parser.add_option("-B", "--bzserver", dest="bzserver", default="https://bugzilla.redhat.com/", help="BZ instance, trailing slash")
+    parser.add_option("-I", "--issue-prefix", dest="ISSUE_PREFIX", default="RHBZ", help="prefix to use on issue links: RHBZ, EBZ, etc.")
+    parser.add_option("-J", "--jira-project", dest="JIRA_PROJECT", default="RHBZ", help="project in JIRA: RHBZ, ERT, etc.")
+    parser.add_option("-d", "--dry-run", dest="dryrun", action="store_true", help="run without creating proxy issues")
+    parser.add_option("-v", "--verbose", dest="verbose", action="store_true", help="more verbose console output")
+    parser.add_option("-a", "--auto-create", dest="autocreate", action="store_true", help="if set, automatically create components and versions as needed")
+    parser.add_option("-A", "--auto-accept", dest="autoaccept", action="store_true", help="if set, automatically accept created issues")
+    parser.add_option("-m", "--min-age", dest="minimum_age_to_process", help="if set, query only bugzillas changed in the last x hours")
+    parser.add_option("-S", "--start-date", dest="start_date", default="", help="if set, show only bugzillas changed since start date (yyyy-mm-dd)")
+    parser.add_option("-C", "--color", dest="colorconsole", action="store_true", help="if set, show colours in console with bash escapes")
+    parser.add_option("-H", "--html-color", dest="htmlcolorconsole", action="store_true", help="if set, show colours in console with html")
+
+    (options, args) = parser.parse_args()
+
+    if (not options.jirauser or not options.jirapwd) and "userpass" in os.environ:
+        # check if os.environ["userpass"] is set and use that if defined
+        #sys.exit("Got os.environ[userpass] = " + os.environ["userpass"])
+        userpass_bits = os.environ["userpass"].split(":")
+        options.jirauser = userpass_bits[0]
+        options.jirapwd = userpass_bits[1]
+
+    if not options.jirauser or not options.jirapwd:
+        parser.error("Missing jirauser or jirapwd")
+
+    return options
 
 components = []
 versions = []
@@ -53,7 +92,7 @@ transitionmap = {
     
 def lookup_proxy(options, bug):
     #TODO should keep a local cache from BZ->JIRA to avoid constant querying
-    payload = {'jql': 'project = ' + ECLIPSE_PROJECT + ' and summary ~ \'EBZ#' + str(bug.id) +'\'', 'maxResults' : 5}
+    payload = {'jql': 'project = ' + JIRA_PROJECT + ' and summary ~ \'' + ISSUE_PREFIX + '#' + str(bug.id) +'\'', 'maxResults' : 5}
     data = shared.jiraquery(options, "/rest/api/latest/search?" + urllib.urlencode(payload))
     count = len(data['issues'])
     if (count == 0):
@@ -74,9 +113,9 @@ def lookup_remotelink(options, jira_id):
     else:
         return
 
-# set up issue link to EBZ
+# set up issue link to ISSUE_PREFIX = RHBZ / EBZ
 def create_remotelink(jira_id, bug):
-    link_dict = { "title": "Eclipse Bug #" + str(bug.id), "url": bug.weburl }
+    link_dict = { "title": ISSUE_PREFIX + " #" + str(bug.id), "url": bug.weburl }
     if (options.verbose):
         print "[DEBUG] Add remotelink: " + str(link_dict)
     jira.add_simple_link(jira_id, object=link_dict)
@@ -100,21 +139,21 @@ def create_proxy_jira_dict(options, bug):
                 accept = raw_input("Create " + jiraversion + " ?")
             if accept.capitalize() in "Y":
                 print norm + "[WARNING] Version '" + green + jiraversion + norm + "' mapped from '" + \
-                    green + bug.target_milestone + norm + "' not found in " + green + ECLIPSE_PROJECT + \
+                    green + bug.target_milestone + norm + "' not found in " + green + JIRA_PROJECT + \
                     norm + ". Please create it or fix the mapping. " + blue + "Bug: " + str(bug) + norm
-                newv = jira.create_version(jiraversion, ECLIPSE_PROJECT)
-                versions = jira.project_versions(ECLIPSE_PROJECT)
+                newv = jira.create_version(jiraversion, JIRA_PROJECT)
+                versions = jira.project_versions(JIRA_PROJECT)
                 jiraversion = newv.name
             else:
                 print red + "[ERROR] Version '" + green + jiraversion + norm + "' mapped from '" + \
-                	green + bug.target_milestone + red + "' not found in " + green + ECLIPSE_PROJECT + \
-                	red + ". Please create it or fix the mapping. " + blue + "Bug: " + str(bug) + norm
+                    green + bug.target_milestone + red + "' not found in " + green + JIRA_PROJECT + \
+                    red + ". Please create it or fix the mapping. " + blue + "Bug: " + str(bug) + norm
                 missing_versions[jiraversion].add(bug)
                 return
             
         if (not jiraversion):
             print red + "[ERROR] No mapping for '" + green + bug.target_milestone + red \
-            	+ "'. Please fix the mapping. " + blue + "Bug: " + str(bug) + norm 
+                + "'. Please fix the mapping. " + blue + "Bug: " + str(bug) + norm 
             jiraversion = "Missing Map"
             return
             
@@ -132,8 +171,8 @@ def create_proxy_jira_dict(options, bug):
             accept = raw_input("Create component: " + bug.product + " ?")
                 
         if accept.capitalize() in "Y":
-            comp = jira.create_component(bug.product, ECLIPSE_PROJECT)
-            components = jira.project_components(ECLIPSE_PROJECT)
+            comp = jira.create_component(bug.product, JIRA_PROJECT)
+            components = jira.project_components(JIRA_PROJECT)
 
 
     labels=['bzira']
@@ -142,8 +181,8 @@ def create_proxy_jira_dict(options, bug):
         labels.append(bug.target_milestone.replace(" ", "_")) # label not allowed to have spaces.
 
     issue_dict = {
-        'project' : { 'key': ECLIPSE_PROJECT },
-        'summary' : bug.summary + ' [EBZ#' + str(bug.id) + "]",
+        'project' : { 'key': JIRA_PROJECT },
+        'summary' : bug.summary + ' [' + ISSUE_PREFIX + '#' + str(bug.id) + "]",
         'description' : bug.getcomments()[0]['text'], # TODO this loads all comments...everytime. probably should wait to do this once it is absolutely needed.
         'issuetype' : { 'name' : 'Task' }, # No notion of types in bugzilla just taking the most generic/non-specifc in jira
         'priority' : { 'name' : bz_to_jira_priority(options, bug) },
@@ -238,17 +277,32 @@ def map_mpc(version):
     else:
         return NO_VERSION
 
+################################
+
+def map_fedora(version):
+    if re.match(r"([0-9]+|rawhide)", version):
+        return re.sub(r"([0-9]+|rawhide)", r"Fedora \1", version)
+def map_devtools(version):
+    if re.match(r"rh-eclipse4([0-9])", version):
+        return re.sub(r"rh-eclipse4([0-9])", r"Oxygen (4.\1)", version)
+
 bzprod_version_map = {
     #"WTP Incubator" : (lambda version: NO_VERSION), // no obvious mapping available for the Target Milestones
     "JSDT" : map_webtools,
     "WTP Source Editing" : map_webtools,
     "WTP Common Tools" : map_webtools,
+    "WTP ServerTools" : map_webtools,
     "Platform" : map_platform,
     "Linux Tools" : map_linuxtools,
     "MPC" : map_mpc,
     "m2e" : map_m2e,
     "Thym" : map_thym,
-    "Tycho" : map_tycho
+    "Tycho" : map_tycho,
+
+    "DevTools" : map_devtools,
+    "Fedora" : map_fedora,
+    "Errata Tool" : NO_VERSION,
+    "Red Hat Customer Portal" : NO_VERSION
     }
     
 def bz_to_jira_version(options, bug):
@@ -287,7 +341,10 @@ bz2jira_priority = {
     }
     
 def bz_to_jira_priority(options, bug):
-    return bz2jira_priority[bug.severity] # Jira is dumb. jira priority is severity.
+    if bug.severity is not None and bug.severity != 'unspecified':
+        return bz2jira_priority[bug.severity] # Jira is dumb. jira priority is severity.
+    else:
+        return bz2jira_priority['major']
 
 bz2jira_status = {
            "NEW" : "Open",
@@ -317,7 +374,7 @@ bz2jira_resolution = {
            "DUPLICATE" : "Duplicate Issue",
            "WORKSFORME" : "Cannot Reproduce Bug",
            "MOVED" : "Migrated to another ITS",
-           "NOT_ECLIPSE" : "Invalid" # don't have an exact mapping so using invalid as "best approximation"
+           "NOT_UPSTREAM" : "Invalid" # don't have an exact mapping so using invalid as "best approximation"
     }
     
 def bz_to_jira_resolution(options, bug):
@@ -337,29 +394,6 @@ def bz_to_jira_resolution(options, bug):
         return jresolutionid
 
     raise ValueError('Could not find matching resolution for ' + bug.resolution)
-    
-def parse_options():
-    usage = "Usage: %prog -u <user> -p <password> \nCreates proxy issues for bugzilla issues in jira"
-
-    parser = OptionParser(usage)
-    parser.add_option("-u", "--user", dest="username", help="jira username")
-    parser.add_option("-p", "--pwd", dest="password", help="jira password")
-    parser.add_option("-s", "--server", dest="jiraserver", default="https://issues.stage.jboss.org", help="Jira instance")
-    parser.add_option("-d", "--dry-run", dest="dryrun", action="store_true", help="run without creating proxy issues")
-    parser.add_option("-v", "--verbose", dest="verbose", action="store_true", help="more verbose console output")
-    parser.add_option("-a", "--auto-create", dest="autocreate", action="store_true", help="if set, automatically create components and versions as needed")
-    parser.add_option("-A", "--auto-accept", dest="autoaccept", action="store_true", help="if set, automatically accept created issues")
-    parser.add_option("-m", "--min-age", dest="minimum_age_to_process", help="if set, query only bugzillas changed in the last x hours")
-    parser.add_option("-S", "--start-date", dest="start_date", default="", help="if set, show only bugzillas changed since start date (yyyy-mm-dd)")
-    parser.add_option("-C", "--color", dest="colorconsole", action="store_true", help="if set, show colours in console with bash escapes")
-    parser.add_option("-H", "--html-color", dest="htmlcolorconsole", action="store_true", help="if set, show colours in console with html")
-
-    (options, args) = parser.parse_args()
-
-    if not options.username or not options.password:
-        parser.error("Missing username or password")
-
-    return options
 
 def process(bug, bugs):
     newissue = None
@@ -369,7 +403,7 @@ def process(bug, bugs):
 
     if (options.verbose):
         print ""
-        print '[DEBUG] %s - %s [%s, %s, [%s]] {%s} (%s) -> ' % (bug.id, bug.summary, bug.product, bug.component, bug.target_milestone, bug.delta_ts, difference) + yellow + bzserver + str(bug.id) + norm
+        print '[DEBUG] %s - %s [%s, %s, [%s]] {%s} (%s) -> ' % (bug.id, bug.summary, bug.product, bug.component, bug.target_milestone, bug.delta_ts, difference) + yellow + bzserver + "show_bug.cgi?id=" + str(bug.id) + norm
     else:
         sys.stdout.write('.')
         
@@ -380,7 +414,7 @@ def process(bug, bugs):
         
         if (proxyissue):
             if (options.verbose):
-                print "[INFO] " + yellow + bzserver + str(bug.id) + norm + " already proxied as " + blue + options.jiraserver + "/browse/" + proxyissue['key']  + norm + "; checking if something needs updating/syncing."
+                print "[INFO] " + yellow + bzserver + "show_bug.cgi?id=" + str(bug.id) + norm + " already proxied as " + blue + options.jiraserver + "/browse/" + proxyissue['key']  + norm + "; checking if something needs updating/syncing."
 
             fields = {}
             if (not next((c for c in proxyissue['fields']['components'] if bug.product == c['name']), None)):
@@ -417,9 +451,8 @@ def process(bug, bugs):
             bugs.append(newissue)
             print "[INFO] Created " + green + options.jiraserver + "/browse/" + newissue.key + norm
 
-            # Setup issue link to EBZ
+            # Setup issue link to ISSUE_PREFIX = RHBZ / EBZ
             create_remotelink(newissue.key,bug)
-
             # Check for transition needed
             jstatus = bz_to_jira_status(options, bug)
             jresolution = bz_to_jira_resolution(options, bug)
@@ -459,6 +492,19 @@ def process(bug, bugs):
 
 options = parse_options()
 
+# override defaults if set
+if (options.bzserver):
+    bzserver=options.bzserver
+    if not bzserver.endswith("/"):
+        bzserver=bzserver+"/"
+basequery = bzserver + "buglist.cgi?status_whiteboard=RHT"
+
+if (options.JIRA_PROJECT):
+    JIRA_PROJECT=options.JIRA_PROJECT
+
+if (options.ISSUE_PREFIX):
+    ISSUE_PREFIX=options.ISSUE_PREFIX
+
 if (options.colorconsole):
     # colours for console
     norm="\033[0;39m"
@@ -483,8 +529,6 @@ else:
     yellow=""
 
 # TODO cache results locally so we don't have to keep hitting live server to do iterations
-bzserver = "https://bugs.eclipse.org/"
-basequery = bzserver + "bugs/buglist.cgi?status_whiteboard=RHT"
 
 # get current datetime in UTC for comparison to bug.delta_ts, which is also in UTC; use this diff to ignore processing old bugzillas
 now = datetime.utcnow()
@@ -501,6 +545,7 @@ else:
     last_change_time = None
     
 # to query only 3hrs of recent changes:
+# https://bugzilla.redhat.com/buglist.cgi?chfieldfrom=3h&status_whiteboard=RHT&order=changeddate%20DESC%2C or
 # https://bugs.eclipse.org/bugs/buglist.cgi?chfieldfrom=3h&status_whiteboard=RHT&order=changeddate%20DESC%2C
 # but since chfieldfrom not supported in xmlrpc, use last_change_time instead with specific date, not relative one
 if (last_change_time):
@@ -508,7 +553,7 @@ if (last_change_time):
 else:
     query = basequery
     
-bz = bugzilla.Bugzilla(url=bzserver + "bugs/xmlrpc.cgi")
+bz = bugzilla.Bugzilla(url=bzserver + "xmlrpc.cgi")
 
 queryobj = bz.url_to_query(query)
 
@@ -523,11 +568,11 @@ print "[DEBUG] " + "Found " + yellow + str(len(issues)) + norm + " bugzillas to 
 if (len(issues) > 0):
 
     print "[INFO] " + "Logging in to " + purple + options.jiraserver + norm
-    jira = JIRA(options={'server':options.jiraserver}, basic_auth=(options.username, options.password))
+    jira = JIRA(options={'server':options.jiraserver}, basic_auth=(options.jirauser, options.jirapwd))
 
     #TODO should get these data into something more structured than individual global variables.
-    versions = jira.project_versions(ECLIPSE_PROJECT)
-    components = jira.project_components(ECLIPSE_PROJECT)
+    versions = jira.project_versions(JIRA_PROJECT)
+    components = jira.project_components(JIRA_PROJECT)
 
     if (options.verbose):
         print "[DEBUG] " + "Found " + yellow + str(len(components)) + norm + " components and " + yellow + str(len(versions)) + norm + " versions in JIRA"
