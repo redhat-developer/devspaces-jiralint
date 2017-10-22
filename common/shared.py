@@ -5,7 +5,7 @@ import json
 
 def jiraquery (options, url):
     request = urllib2.Request(options.jiraserver + url)
-    base64string = base64.encodestring('%s:%s' % (options.username, options.password)).replace('\n', '')
+    base64string = base64.encodestring('%s:%s' % (options.jirauser, options.jirapwd)).replace('\n', '')
     request.add_header("Authorization", "Basic %s" % base64string)   
 
 
@@ -25,7 +25,7 @@ def jirapost(options, url, data):
     jdata = json.dumps(data)
     
     request = urllib2.Request(options.jiraserver + url,jdata)
-    base64string = base64.encodestring('%s:%s' % (options.username, options.password)).replace('\n', '')
+    base64string = base64.encodestring('%s:%s' % (options.jirauser, options.jirapwd)).replace('\n', '')
     request.add_header("Authorization", "Basic %s" % base64string)   
     request.add_header("Content-Type","application/json")
 
@@ -55,7 +55,7 @@ def jiraupdate(options, url, data):
     jdata = json.dumps(data)
     
     request = urllib2.Request(options.jiraserver + url,jdata)
-    base64string = base64.encodestring('%s:%s' % (options.username, options.password)).replace('\n', '')
+    base64string = base64.encodestring('%s:%s' % (options.jirauser, options.jirapwd)).replace('\n', '')
     request.add_header("Authorization", "Basic %s" % base64string)   
     request.add_header("Content-Type","application/json")
     request.get_method = lambda: 'PUT'

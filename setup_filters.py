@@ -131,20 +131,20 @@ def listVersions(project, pattern=".*", released=None, hasReleaseDate=None, arch
 
     
 
-usage = "usage: %prog -u <user> -p <password> -f <filters.json>\nCreate/maintain set of filters defined in filters.json."
+usage = "usage: %prog -u <jirauser> -p <jirapwd> -f <filters.json>\nCreate/maintain set of filters defined in filters.json."
 
 parser = OptionParser(usage)
 
 #todo: move the shared options to common ?
-parser.add_option("-u", "--user", dest="username", help="jira username")
-parser.add_option("-p", "--pwd", dest="password", help="jira password")
+parser.add_option("-u", "--user", dest="jirauser", help="jirauser")
+parser.add_option("-p", "--pwd", dest="jirapwd", help="jirapwd")
 parser.add_option("-s", "--server", dest="jiraserver", default="https://issues.jboss.org", help="Jira instance")
 parser.add_option("-f", "--filters", dest="filterfiles", default="filters.json", help="comma separated list of filters to setup")
 parser.add_option("-v", "--verbose", dest="verbose", action="store_true", help="more verbose logging")
 (options, args) = parser.parse_args()
     
-if not options.username or not options.password:
-    parser.error("Missing username or password")
+if not options.jirauser or not options.jirapwd:
+    parser.error("Missing jirauser or jirapwd")
 
 
 if options.filterfiles:

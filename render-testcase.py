@@ -16,18 +16,18 @@ from common import shared
 
 pp = pprint.PrettyPrinter(indent=4)
 
-def fetch_email(username, fallback, email_addresses):
-    if username in email_addresses:
-        return email_addresses[username]
+def fetch_email(jirauser, fallback, email_addresses):
+    if jirauser in email_addresses:
+        return email_addresses[jirauser]
     else:
         found = None
-        payload = {'username': username}
+        payload = {'jirauser': jirauser}
         user_data = shared.jiraquery(options, "/rest/api/2/user?" + urllib.urlencode(payload))
         if 'emailAddress' in user_data:
             found = str(user_data['emailAddress'])
-            email_addresses[username]=found
+            email_addresses[jirauser]=found
         else:
-            print 'No email found for ' + username + ' using ' + str(fallback)
+            print 'No email found for ' + jirauser + ' using ' + str(fallback)
             found = fallback
             # don't cache if not found
         return found
@@ -242,11 +242,11 @@ def render(issue_type, issue_description, jira_env, issues, jql, options, email_
 
     return email_addresses
 
-usage = "usage: %prog -u <user> -p <password> -r <report.json>\nGenerates junit test report based on issues returned from queries."
+usage = "usage: %prog -u <jirauser> -p <jirapwd> -r <report.json>\nGenerates junit test report based on issues returned from queries."
 
 parser = OptionParser(usage)
-parser.add_option("-u", "--user", dest="username", help="jira username")
-parser.add_option("-p", "--pwd", dest="password", help="jira password")
+parser.add_option("-u", "--user", dest="jirauser", help="jirauser")
+parser.add_option("-p", "--pwd", dest="jirapwd", help="jirapwd")
 parser.add_option("-s", "--server", dest="jiraserver", default="https://issues.jboss.org", help="Jira instance")
 parser.add_option("-l", "--limit", dest="maxresults", default=200, help="maximum number of results to return from json queries (default 200)")
 parser.add_option("-r", "--report", dest="reportfile", default=None, help=".json file with list of queries to run")
@@ -259,14 +259,14 @@ parser.add_option("-v", "--verbose", dest="verbose", action="store_true", help="
 
 (options, args) = parser.parse_args()
 
-if not options.username or not options.password:
-    parser.error("Missing username or password")
+if not options.jirauser or not options.jirapwd:
+    parser.error("Missing jirauser or jirapwd")
 
 if options.fromemail and (not options.unassignedjiraemail or not options.smtphost):
     parser.error("Need to specify both --unassignedjiraemail and --smpthost to send mail")
 
 
-# store an array of username : email_address and componentid: component data we can use as a lookup table
+# store an array of jirauser : email_address and componentid: component data we can use as a lookup table
 email_addresses = {}
 components = {}
     
