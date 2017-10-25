@@ -8,7 +8,6 @@ def jiraquery (options, url):
     base64string = base64.encodestring('%s:%s' % (options.jirauser, options.jirapwd)).replace('\n', '')
     request.add_header("Authorization", "Basic %s" % base64string)   
 
-
     if options.verbose:
         print "Query: " + options.jiraserver + url
    

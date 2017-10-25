@@ -1,8 +1,7 @@
 from urlparse import urlparse
-import urllib
+import urllib, sys, os
 ##import yaml  not on rhel4
 import json
-import sys
 import smtplib
 import datetime
 from datetime import timedelta
@@ -16,23 +15,22 @@ from common import shared
 
 pp = pprint.PrettyPrinter(indent=4)
 
-def fetch_email(jirauser, fallback, email_addresses):
-    if jirauser in email_addresses:
-        return email_addresses[jirauser]
+def fetch_email(username, fallback, email_addresses):
+    if username in email_addresses:
+        return email_addresses[username]
     else:
         found = None
-        payload = {'jirauser': jirauser}
+        payload = {'username': username}
         user_data = shared.jiraquery(options, "/rest/api/2/user?" + urllib.urlencode(payload))
         if 'emailAddress' in user_data:
             found = str(user_data['emailAddress'])
-            email_addresses[jirauser]=found
+            email_addresses[username]=found
         else:
-            print 'No email found for ' + jirauser + ' using ' + str(fallback)
+            print 'No email found for ' + username + ' using ' + str(fallback)
             found = fallback
             # don't cache if not found
         return found
                                         
-
 def xstr(s):
     if s is None:
         return 'None'
@@ -48,7 +46,6 @@ def email_array_to_string(email_array):
 # thanks to http://guidetoprogramming.com/joomla153/python-scripts/22-send-email-from-python
 def mailsend (smtphost, from_email, to_email, subject, message, recipients_list, options):
     
-    server = smtplib.SMTP(smtphost, 25)
 
     header = 'To: ' + recipients_list + '\n' + \
         'From: ' + from_email + '\n' + \
@@ -60,8 +57,9 @@ def mailsend (smtphost, from_email, to_email, subject, message, recipients_list,
     if options.verbose:
         print msg
     if not options.dryrun:
+        server = smtplib.SMTP(smtphost, 25)
         server.sendmail(from_email, recipients_list, msg)
-    server.close()
+        server.close()
 
 def render(issue_type, issue_description, jira_env, issues, jql, options, email_addresses, components):
         
@@ -242,11 +240,11 @@ def render(issue_type, issue_description, jira_env, issues, jql, options, email_
 
     return email_addresses
 
-usage = "usage: %prog -u <jirauser> -p <jirapwd> -r <report.json>\nGenerates junit test report based on issues returned from queries."
+usage = "usage: %prog -u <username> -p <password> -r <report.json>\nGenerates junit test report based on issues returned from queries."
 
 parser = OptionParser(usage)
-parser.add_option("-u", "--user", dest="jirauser", help="jirauser")
-parser.add_option("-p", "--pwd", dest="jirapwd", help="jirapwd")
+parser.add_option("-u", "--user", dest="jirauser", help="username")
+parser.add_option("-p", "--pwd", dest="jirapwd", help="password")
 parser.add_option("-s", "--server", dest="jiraserver", default="https://issues.jboss.org", help="Jira instance")
 parser.add_option("-l", "--limit", dest="maxresults", default=200, help="maximum number of results to return from json queries (default 200)")
 parser.add_option("-r", "--report", dest="reportfile", default=None, help=".json file with list of queries to run")
@@ -259,14 +257,20 @@ parser.add_option("-v", "--verbose", dest="verbose", action="store_true", help="
 
 (options, args) = parser.parse_args()
 
+if (not options.jirauser or not options.jirapwd) and "userpass" in os.environ:
+    # check if os.environ["userpass"] is set and use that if defined
+    #sys.exit("Got os.environ[userpass] = " + os.environ["userpass"])
+    userpass_bits = os.environ["userpass"].split(":")
+    options.jirauser = userpass_bits[0]
+    options.jirapwd = userpass_bits[1]
+
 if not options.jirauser or not options.jirapwd:
-    parser.error("Missing jirauser or jirapwd")
+    parser.error("Missing username or password")
 
 if options.fromemail and (not options.unassignedjiraemail or not options.smtphost):
     parser.error("Need to specify both --unassignedjiraemail and --smpthost to send mail")
 
-
-# store an array of jirauser : email_address and componentid: component data we can use as a lookup table
+# store an array of username : email_address and componentid: component data we can use as a lookup table
 email_addresses = {}
 components = {}
     
@@ -274,13 +278,15 @@ if options.reportfile:
     print "Using reports defined in " + options.reportfile
     reports = json.load(open(options.reportfile, 'r'))
 
-    
     for report in reports:
         for issue_type,fields in report.items():
             print("Check for '"  + issue_type.lower() + "'")
             payload = {'jql': fields['jql'], 'maxResults' : options.maxresults}
             data = shared.jiraquery(options, "/rest/api/2/search?" + urllib.urlencode(payload))
             print(str(len(data['issues'])) + " issues found with '" + issue_type.lower() + "'")
+            if options.verbose:
+                print data
+                print options
             email_addresses = render(issue_type, fields['description'].encode('utf8','replace'), data, data['issues'], fields['jql'], options, email_addresses, components)
 else:
     print "Generating based on .json found on standard in"
