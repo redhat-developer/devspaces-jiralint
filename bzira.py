@@ -229,10 +229,16 @@ def map_linuxtools(version):
 
 # TODO ensure this works for 4.6.x -> Neon.x 
 def map_platform(version):
-    if re.match(r"4.7\.([123])", version):
+    if re.match(r"4.8\.([123])", version):
+        return re.sub(r"4.8\.([123])", r"Photon.\1 (4.8)", version)
+    elif re.match(r"4.8 (.*)", version):
+        return re.sub(r"4.8 (.*)", r"Photon (4.8) \1", version)
+
+    elif re.match(r"4.7\.([123])", version):
         return re.sub(r"4.7\.([123])", r"Oxygen.\1 (4.7)", version)
     elif re.match(r"4.7 (.*)", version):
         return re.sub(r"4.7 (.*)", r"Oxygen (4.7) \1", version)
+
     elif re.match(r"4.6.0", version):
         return re.sub(r"4.6.0", r"Neon (4.6)", version)
     elif re.match(r"4.6\.([123])", version):
@@ -244,12 +250,20 @@ def map_platform(version):
 
 # TODO ensure this works for 3.8.x -> Neon.x 
 def map_webtools(version):
-    if re.match(r"3.9\.([0-9])", version):
+    if re.match(r"3.10\.([0-9])", version):
+        return re.sub(r"3.10\.([0-9])", r"Photon.\1 (4.8)", version)
+    elif re.match(r"3.10 (.*)", version):
+        return re.sub(r"3.10 (.*)", r"Photon (4.8) \1", version)
+    elif re.match(r"3.10", version):
+        return re.sub(r"3.10", r"Photon (4.8)", version)
+
+    elif re.match(r"3.9\.([0-9])", version):
         return re.sub(r"3.9\.([0-9])", r"Oxygen.\1 (4.7)", version)
     elif re.match(r"3.9 (.*)", version):
         return re.sub(r"3.9 (.*)", r"Oxygen (4.7) \1", version)
     elif re.match(r"3.9", version):
         return re.sub(r"3.9", r"Oxygen (4.7)", version)
+
     elif re.match(r"3.8.0", version):
         return re.sub(r"3.8.0", r"Neon (4.6)", version)
     elif re.match(r"3.8.2", version):
@@ -272,8 +286,12 @@ def map_m2e(version):
 
 # Eclipse Marketplace Client (MPC)
 def map_mpc(version):
-    if re.match(r"1.6\.(.*)", version):
+    if re.match(r"1.7\.(.*)", version):
+        return re.sub(r"1.7(.*)",     r"Photon.\1 (4.8)", version)
+
+    elif re.match(r"1.6\.(.*)", version):
         return re.sub(r"1.6(.*)",     r"Oxygen.\1 (4.7)", version)
+
     elif re.match(r"1.5.4", version):
         return re.sub(r"1.5.4",       r"Neon.3 (4.6)", version)
     elif re.match(r"1.5\.(.*)", version):
@@ -296,6 +314,7 @@ bzprod_version_map = {
     "WTP Source Editing" : map_webtools,
     "WTP Common Tools" : map_webtools,
     "WTP ServerTools" : map_webtools,
+    "WTP Webservices" : map_webtools,
     "Platform" : map_platform,
     "Linux Tools" : map_linuxtools,
     "MPC" : map_mpc,
