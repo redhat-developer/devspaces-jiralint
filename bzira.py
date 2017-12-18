@@ -227,7 +227,6 @@ def map_linuxtools(version):
     else:
         return NO_VERSION
 
-# TODO ensure this works for 4.6.x -> Neon.x 
 def map_platform(version):
     if re.match(r"4.8\.([123])", version):
         return re.sub(r"4.8\.([123])", r"Photon.\1 (4.8)", version)
@@ -248,7 +247,6 @@ def map_platform(version):
     else:
         return NO_VERSION
 
-# TODO ensure this works for 3.8.x -> Neon.x 
 def map_webtools(version):
     if re.match(r"3.10\.([0-9])", version):
         return re.sub(r"3.10\.([0-9])", r"Photon.\1 (4.8)", version)
@@ -275,12 +273,21 @@ def map_webtools(version):
     else:
         return NO_VERSION
 
-# TODO ensure this works for m2e 1.8
 def map_m2e(version):
     if re.match(r"1.8(.*)/Oxygen (.*)", version):
         return re.sub(r"1.8(.*)/Oxygen (.*)", r"Oxygen (4.7) \2", version)
     elif re.match(r"1.7(.*)/Neon (.*)", version):
         return re.sub(r"1.7(.*)/Neon (.*)",   r"Neon (4.6) \2", version)
+    else:
+        return NO_VERSION
+
+# Photon M5 -> Photon (4.8) M5
+# Oxygen.3 -> Oxygen.3 (4.7) 
+def map_orbit(version):
+    if re.match(r"Oxygen([.1234]*) (.+)", version):
+        return re.sub(r"Oxygen([.1234]*) (.+)", r"Oxygen\1 (4.7) \2", version)
+    elif re.match(r"Photon([.1234]*) (.+)", version):
+        return re.sub(r"Photon([.1234]*) (.+)", r"Photon\1 (4.8) \2", version)
     else:
         return NO_VERSION
 
@@ -321,6 +328,7 @@ bzprod_version_map = {
     "m2e" : map_m2e,
     "Thym" : map_thym,
     "Tycho" : map_tycho,
+    "Orbit" : map_orbit,
 
     "DevTools" : map_devtools,
     "Fedora" : map_fedora,
