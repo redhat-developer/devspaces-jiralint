@@ -14,6 +14,28 @@ import sys
 from collections import defaultdict
 import logging
 
+######################################################
+## Jenkins usage:
+# 
+## Python is in /usr/bin/python2.7 or /usr/bin/python but not on all slaves
+# DOES NOT RUN with Python 3.5
+# whereis python && python -V
+# if [[ ! -w ${HOME}/.local/bin ]]; then pipFolder=${HOME}/.local/bin; else pipFolder=${WORKSPACE}/.local/bin; fi
+# mkdir -p ${pipFolder}
+# if [[ ! -x ${pipFolder}/pip ]]; then  # get pip
+#  curl https://bootstrap.pypa.io/get-pip.py > get-pip.py
+#  python -W ignore get-pip.py --user
+# fi
+# pip install --upgrade --user pip bugzillatools python-bugzilla jira pytz pbr funcsigs
+# 
+######################################################
+#
+### To see list of installed pip modules and versions:
+#
+# pip freeze 
+#
+#######################################################
+
 httpdebug = False
 
 NO_VERSION = "!_NO_VERSION_!"
