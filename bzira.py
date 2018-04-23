@@ -254,7 +254,8 @@ def map_platform(version):
         return re.sub(r"4.8\.([123])", r"Photon.\1 (4.8)", version)
     elif re.match(r"4.8 (.*)", version):
         return re.sub(r"4.8 (.*)", r"Photon (4.8) \1", version)
-
+    elif re.match(r"4.8", version):
+        return re.sub(r"4.8", r"Photon (4.8)", version)
     elif re.match(r"4.7\.([123])", version):
         return re.sub(r"4.7\.([123])", r"Oxygen.\1 (4.7)", version)
     elif re.match(r"4.7 (.*)", version):
