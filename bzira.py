@@ -228,24 +228,30 @@ def map_thym(version):
         return NO_VERSION
 
 def map_tycho(version):
-    if re.match(r"0.27.0", version):
-        return re.sub(r"0.27.0", r"Neon.2 (4.6)", version)
+    if re.match(r"1.3.0", version):
+        return re.sub(r"1.3.0", r"2018-09", version)
+    elif re.match(r"1.2.0", version):
+        return re.sub(r"1.2.0", r"Photon (4.8)", version)
     else:
         return NO_VERSION
 
 def map_linuxtools(version):
-    if re.match(r"7.0.0", version):
-        return re.sub(r"7.0.0", r"Photon (4.8)", version)
+    if re.match(r"7.2.*", version):
+        return re.sub(r"7.2.*", r"2018-12", version)
+    if re.match(r"7.1.*", version):
+        return re.sub(r"7.1.*", r"2018-09", version)
+    elif re.match(r"7.0.*", version):
+        return re.sub(r"7.0.*", r"Photon (4.8)", version)
 
     elif re.match(r"6.0.0", version):
-        return re.sub(r"6.0.0", r"Oxygen (4.7)", version)
+        return re.sub(r"6.0.0", r"Oxygen.3 (4.7)", version)
     elif re.match(r"6.([123]).0", version):
-        return re.sub(r"6.([123]).0", r"Oxygen.\1 (4.7)", version)
+        return re.sub(r"6.([123]).0", r"Oxygen.3 (4.7)", version)
 
     elif re.match(r"5.0.0", version):
         return re.sub(r"5.0.0", r"Neon (4.6)", version)
     elif re.match(r"5.([123]).0", version):
-        return re.sub(r"5.([123]).0", r"Neon.\1 (4.6)", version)
+        return re.sub(r"5.([123]).0", r"Neon.3 (4.6)", version)
 
     elif re.match(r"4.0(.*)", version):
         return re.sub(r"4.0(.*)", r"Mars (4.5)", version)
@@ -262,15 +268,15 @@ def map_platform(version):
         return re.sub(r"4.9([.1-9]*)", r"2018-09", version)
 
     elif re.match(r"4.8\.([123])", version):
-        return re.sub(r"4.8\.([123])", r"Photon.\1 (4.8)", version)
+        return re.sub(r"4.8\.([123])", r"Photon (4.8)", version)
     elif re.match(r"4.8 (.*)", version):
-        return re.sub(r"4.8 (.*)", r"Photon (4.8) \1", version)
+        return re.sub(r"4.8 (.*)", r"Photon (4.8)", version)
     elif re.match(r"4.8", version):
         return re.sub(r"4.8", r"Photon (4.8)", version)
     elif re.match(r"4.7\.([123])", version):
-        return re.sub(r"4.7\.([123])", r"Oxygen.\1 (4.7)", version)
+        return re.sub(r"4.7\.([123])", r"Oxygen.3 (4.7)", version)
     elif re.match(r"4.7 (.*)", version):
-        return re.sub(r"4.7 (.*)", r"Oxygen (4.7) \1", version)
+        return re.sub(r"4.7 (.*)", r"Oxygen.3 (4.7) \1", version)
 
     elif re.match(r"4.6.0", version):
         return re.sub(r"4.6.0", r"Neon (4.6)", version)
@@ -289,18 +295,18 @@ def map_webtools(version):
         return re.sub(r"3.11([.1-9]*)", r"2018-09", version)
 
     elif re.match(r"3.10\.([0-9])", version):
-        return re.sub(r"3.10\.([0-9])", r"Photon.\1 (4.8)", version)
+        return re.sub(r"3.10\.([0-9])", r"Photon (4.8)", version)
     elif re.match(r"3.10 (.*)", version):
-        return re.sub(r"3.10 (.*)", r"Photon (4.8) \1", version)
+        return re.sub(r"3.10 (.*)", r"Photon (4.8)", version)
     elif re.match(r"3.10", version):
         return re.sub(r"3.10", r"Photon (4.8)", version)
 
     elif re.match(r"3.9\.([0-9])", version):
-        return re.sub(r"3.9\.([0-9])", r"Oxygen.\1 (4.7)", version)
+        return re.sub(r"3.9\.([0-9])", r"Oxygen.3 (4.7)", version)
     elif re.match(r"3.9 (.*)", version):
-        return re.sub(r"3.9 (.*)", r"Oxygen (4.7) \1", version)
+        return re.sub(r"3.9 (.*)", r"Oxygen.3 (4.7) \1", version)
     elif re.match(r"3.9", version):
-        return re.sub(r"3.9", r"Oxygen (4.7)", version)
+        return re.sub(r"3.9", r"Oxygen.3 (4.7)", version)
 
     elif re.match(r"3.8.0", version):
         return re.sub(r"3.8.0", r"Neon (4.6)", version)
@@ -323,30 +329,28 @@ def map_m2e(version):
         return re.sub(r"1.9.0", r"Photon (4.8)", version)
 
     elif re.match(r"1.8(.*)/Oxygen (.*)", version):
-        return re.sub(r"1.8(.*)/Oxygen (.*)", r"Oxygen (4.7) \2", version)
+        return re.sub(r"1.8(.*)/Oxygen (.*)", r"Oxygen.3 (4.7) \2", version)
 
     elif re.match(r"1.7(.*)/Neon (.*)", version):
         return re.sub(r"1.7(.*)/Neon (.*)",   r"Neon (4.6) \2", version)
     else:
         return NO_VERSION
 
-# Photon M5 -> Photon (4.8) M5
-# Oxygen.3 -> Oxygen.3 (4.7) 
 def map_orbit(version):
-    if re.match(r"Oxygen([.1234]*) (.+)", version):
-        return re.sub(r"Oxygen([.1234]*) (.+)", r"Oxygen\1 (4.7) \2", version)
-    elif re.match(r"Photon([.1234]*) (.+)", version):
-        return re.sub(r"Photon([.1234]*) (.+)", r"Photon\1 (4.8) \2", version)
+    if re.match(r"Photon([.1234]*) (.+)", version):
+        return re.sub(r"Photon([.1234]*) (.+)", r"Photon (4.8)", version)
+    elif re.match(r"Oxygen([.1234]*) (.+)", version):
+        return re.sub(r"Oxygen([.1234]*) (.+)", r"Oxygen.3 (4.7)", version)
     else:
         return NO_VERSION
 
 # Eclipse Marketplace Client (MPC)
 def map_mpc(version):
     if re.match(r"1.7\.(.*)", version):
-        return re.sub(r"1.7(.*)",     r"Photon.\1 (4.8)", version)
+        return re.sub(r"1.7(.*)",     r"Photon (4.8)", version)
 
     elif re.match(r"1.6\.(.*)", version):
-        return re.sub(r"1.6(.*)",     r"Oxygen.\1 (4.7)", version)
+        return re.sub(r"1.6(.*)",     r"Oxygen.3 (4.7)", version)
 
     elif re.match(r"1.5.4", version):
         return re.sub(r"1.5.4",       r"Neon.3 (4.6)", version)
@@ -361,8 +365,17 @@ def map_fedora(version):
     if re.match(r"([0-9]+|rawhide)", version):
         return re.sub(r"([0-9]+|rawhide)", r"Fedora \1", version)
 def map_devtools(version):
-    if re.match(r"rh-eclipse4([0-9])", version):
-        return re.sub(r"rh-eclipse4([0-9])", r"Oxygen (4.\1)", version)
+	# is this correct?
+    if re.match(r"rh-eclipse410", version):
+        return re.sub(r"rh-eclipse410", r"2018-12", version)
+    elif re.match(r"rh-eclipse49", version):
+        return re.sub(r"rh-eclipse49", r"2018-09", version)
+    elif re.match(r"rh-eclipse48", version):
+        return re.sub(r"rh-eclipse48", r"Photon (4.8)", version)
+    elif re.match(r"rh-eclipse47", version):
+        return re.sub(r"rh-eclipse47", r"Oxygen.3 (4.7)", version)
+    else:
+        return NO_VERSION
 
 bzprod_version_map = {
     #"WTP Incubator" : (lambda version: NO_VERSION), // no obvious mapping available for the Target Milestones
