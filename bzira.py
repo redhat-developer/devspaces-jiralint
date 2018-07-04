@@ -248,15 +248,6 @@ def map_linuxtools(version):
     elif re.match(r"6.([123]).0", version):
         return re.sub(r"6.([123]).0", r"Oxygen.3 (4.7)", version)
 
-    elif re.match(r"5.0.0", version):
-        return re.sub(r"5.0.0", r"Neon (4.6)", version)
-    elif re.match(r"5.([123]).0", version):
-        return re.sub(r"5.([123]).0", r"Neon.3 (4.6)", version)
-
-    elif re.match(r"4.0(.*)", version):
-        return re.sub(r"4.0(.*)", r"Mars (4.5)", version)
-    elif re.match(r"4.([123]).(.*)", version):
-        return re.sub(r"4.([123]).(.*)", r"Mars.\1 (4.5)", version)
     else:
         return NO_VERSION
 
@@ -278,12 +269,6 @@ def map_platform(version):
     elif re.match(r"4.7 (.*)", version):
         return re.sub(r"4.7 (.*)", r"Oxygen.3 (4.7) \1", version)
 
-    elif re.match(r"4.6.0", version):
-        return re.sub(r"4.6.0", r"Neon (4.6)", version)
-    elif re.match(r"4.6\.([123])", version):
-        return re.sub(r"4.6\.([123])", r"Neon.\1 (4.6)", version)
-    elif re.match(r"4.6 (.*)", version):
-        return re.sub(r"4.6 (.*)", r"Neon (4.6) \1", version)
     else:
         return NO_VERSION
 
@@ -308,14 +293,6 @@ def map_webtools(version):
     elif re.match(r"3.9", version):
         return re.sub(r"3.9", r"Oxygen.3 (4.7)", version)
 
-    elif re.match(r"3.8.0", version):
-        return re.sub(r"3.8.0", r"Neon (4.6)", version)
-    elif re.match(r"3.8.2", version):
-        return re.sub(r"3.8.2", r"Neon.3 (4.6)", version)
-    elif re.match(r"3.8\.([1-9])", version):
-        return re.sub(r"3.8\.([1-9])", r"Neon.\1 (4.6)", version)
-    elif re.match(r"3.8 (.*)", version):
-        return re.sub(r"3.8 (.*)", r"Neon (4.6) \1", version)
     else:
         return NO_VERSION
 
@@ -331,8 +308,6 @@ def map_m2e(version):
     elif re.match(r"1.8(.*)/Oxygen (.*)", version):
         return re.sub(r"1.8(.*)/Oxygen (.*)", r"Oxygen.3 (4.7) \2", version)
 
-    elif re.match(r"1.7(.*)/Neon (.*)", version):
-        return re.sub(r"1.7(.*)/Neon (.*)",   r"Neon (4.6) \2", version)
     else:
         return NO_VERSION
 
@@ -352,10 +327,6 @@ def map_mpc(version):
     elif re.match(r"1.6\.(.*)", version):
         return re.sub(r"1.6(.*)",     r"Oxygen.3 (4.7)", version)
 
-    elif re.match(r"1.5.4", version):
-        return re.sub(r"1.5.4",       r"Neon.3 (4.6)", version)
-    elif re.match(r"1.5\.(.*)", version):
-        return re.sub(r"1.5\.(.*)",   r"Neon.\1 (4.6)", version)
     else:
         return NO_VERSION
 
