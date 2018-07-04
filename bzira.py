@@ -234,14 +234,19 @@ def map_tycho(version):
         return NO_VERSION
 
 def map_linuxtools(version):
-    if re.match(r"6.0.0", version):
+    if re.match(r"7.0.0", version):
+        return re.sub(r"7.0.0", r"Photon (4.8)", version)
+
+    elif re.match(r"6.0.0", version):
         return re.sub(r"6.0.0", r"Oxygen (4.7)", version)
     elif re.match(r"6.([123]).0", version):
         return re.sub(r"6.([123]).0", r"Oxygen.\1 (4.7)", version)
+
     elif re.match(r"5.0.0", version):
         return re.sub(r"5.0.0", r"Neon (4.6)", version)
     elif re.match(r"5.([123]).0", version):
         return re.sub(r"5.([123]).0", r"Neon.\1 (4.6)", version)
+
     elif re.match(r"4.0(.*)", version):
         return re.sub(r"4.0(.*)", r"Mars (4.5)", version)
     elif re.match(r"4.([123]).(.*)", version):
@@ -250,7 +255,13 @@ def map_linuxtools(version):
         return NO_VERSION
 
 def map_platform(version):
-    if re.match(r"4.8\.([123])", version):
+    if re.match(r"4.10([.1-9]*)", version):
+        return re.sub(r"4.10([.1-9]*)", r"2018-12", version)
+
+    elif re.match(r"4.9([.1-9]*)", version):
+        return re.sub(r"4.9([.1-9]*)", r"2018-09", version)
+
+    elif re.match(r"4.8\.([123])", version):
         return re.sub(r"4.8\.([123])", r"Photon.\1 (4.8)", version)
     elif re.match(r"4.8 (.*)", version):
         return re.sub(r"4.8 (.*)", r"Photon (4.8) \1", version)
@@ -271,7 +282,13 @@ def map_platform(version):
         return NO_VERSION
 
 def map_webtools(version):
-    if re.match(r"3.10\.([0-9])", version):
+    if re.match(r"3.12([.1-9]*)", version):
+        return re.sub(r"3.12([.1-9]*)", r"2018-12", version)
+
+    elif re.match(r"3.11([.1-9]*)", version):
+        return re.sub(r"3.11([.1-9]*)", r"2018-09", version)
+
+    elif re.match(r"3.10\.([0-9])", version):
         return re.sub(r"3.10\.([0-9])", r"Photon.\1 (4.8)", version)
     elif re.match(r"3.10 (.*)", version):
         return re.sub(r"3.10 (.*)", r"Photon (4.8) \1", version)
@@ -297,8 +314,17 @@ def map_webtools(version):
         return NO_VERSION
 
 def map_m2e(version):
-    if re.match(r"1.8(.*)/Oxygen (.*)", version):
+
+    # is this correct ???
+    if re.match(r"1.9.1", version):
+        return re.sub(r"1.9.1", r"2018-09", version)
+
+    elif re.match(r"1.9.0", version):
+        return re.sub(r"1.9.0", r"Photon (4.8)", version)
+
+    elif re.match(r"1.8(.*)/Oxygen (.*)", version):
         return re.sub(r"1.8(.*)/Oxygen (.*)", r"Oxygen (4.7) \2", version)
+
     elif re.match(r"1.7(.*)/Neon (.*)", version):
         return re.sub(r"1.7(.*)/Neon (.*)",   r"Neon (4.6) \2", version)
     else:
