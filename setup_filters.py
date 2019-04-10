@@ -60,7 +60,7 @@ def listVersions(project, pattern=".*", released=None, hasReleaseDate=None, arch
     """Return list of versions for a specific project matching a pattern and a list of optional filters.
 
            arguments:
-            project -- the jira project key (i.e. 'JBIDE') (required)
+            project -- the jira project key (i.e. 'CRW') (required)
             pattern -- regular expression that the version name should match (i.e. '4.2.*') (default=.*)
             released -- boolean to state if the version should be released or not. (default=None)
             archived -- boolean to state if the version should be archived or not. (default=None)
@@ -72,13 +72,13 @@ def listVersions(project, pattern=".*", released=None, hasReleaseDate=None, arch
             index -- integer to state which index to get (supports negative indexing too, -1=last element), if index out of range nothing is returned. (default=None)
 
             examples:
-            listVersions("JBIDE", "4.2.*") -- versions in JBIDE starting with "4.2."
-            listVersions("JBIDE", "4.2.*", upperLimit=2) -- first two version of 4.2.*
-            listVersions("JBIDE", "4.2.*", released=False, upperLimit=2) -- first two version that are released in 4.2.*
-            listVersions("JBIDE", "4.2.*", released=False) -- non-released 4.2.* versions
-            listVersions("JBIDE", "4.2.*|4.3.*", released=False, hasReleaseDate=True) -- non-released that has release date in either 4.2 or 4.3 streams
-            listVersions("JBIDE", "4.2.*|4.3.*", released=False, hasStartDate=True) -- non-released that has start date in either 4.2 or 4.3 streams
-            listVersions("JBIDE", ".*", archived=True, hasReleaseDate=True, lowerLimit=2, lowerLimit=4)
+            listVersions("CRW", "4.2.*") -- versions in CRW starting with "4.2."
+            listVersions("CRW", "4.2.*", upperLimit=2) -- first two version of 4.2.*
+            listVersions("CRW", "4.2.*", released=False, upperLimit=2) -- first two version that are released in 4.2.*
+            listVersions("CRW", "4.2.*", released=False) -- non-released 4.2.* versions
+            listVersions("CRW", "4.2.*|4.3.*", released=False, hasReleaseDate=True) -- non-released that has release date in either 4.2 or 4.3 streams
+            listVersions("CRW", "4.2.*|4.3.*", released=False, hasStartDate=True) -- non-released that has start date in either 4.2 or 4.3 streams
+            listVersions("CRW", ".*", archived=True, hasReleaseDate=True, lowerLimit=2, lowerLimit=4)
     """
 
     versions = shared.jiraquery(options,"/rest/api/latest/project/" + project + "/versions")

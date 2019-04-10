@@ -1,63 +1,53 @@
 {
-    "ds_board_assparta": {
-        "description": "Issues for assparta backlog", 
+    "ds_board_crw_planning": {
+        "description": "Issues for CRW backlog", 
         "id": "12326938", 
-        "jql": "((project in (JBIDE, JBDS) AND component in (server, livereload, archives, openshift, cdk, hibernate, runtime-detection, central, maven, project-examples, common, foundation, usage, jmx, website, integration-tests, webservices, batch, cdi, jsf, jst, visual-page-editor-core, visual-page-editor-templates, runtime-server-protocol)) OR (project = OSJC) OR (project = RHDEVDOCS and component in ( \"devstudio Get Started (Development)\", \"devstudio Get Started (Tooling)\",\"devstudio Installation Guide\",\"devstudio Release Notes & Known Issues\"))) ORDER BY Rank ASC"
+        "jql": "project in (RACHEL, CRW) OR (project in (INTLY) AND labels = CRW) ORDER BY Rank ASC"
     }, 
     "ds_board_buildnext": {
-        "description": "Issues for Build.next backlog", 
+        "description": "Issues for Build backlog", 
         "id": "12326940", 
-        "jql": "(project in (JBIDE, JBDS) AND component in (aeri, build, devdoc, central-update, easymport, marketplace, installer, playground, target-platform, updatesite, versionwatch)) AND status != Closed ORDER BY Rank ASC"
-    }, 
-    "ds_board_californication": {
-        "description": "Issues for Californication backlog", 
-        "id": "12326937", 
-        "jql": "((project in (JBIDE, JBDS, ERT) AND component in (aerogear-hybrid, browsersim, cordovasim, nodejs, visual-page-editor-core, visual-page-editor-templates, xulrunner, javascript, JSDT, 'WTP Source Editing', jst, 'jsp/jsf/xml/html-source-editing','WTP Releng')) OR (project = CHE AND component in (agents, dashboard, docker, IDE, server))) AND status != Closed ORDER BY Rank ASC"
-    }, 
-    "ds_board_docker": {
-        "description": "Issues for Docker Tools backlog", 
-        "id": "12327830", 
-        "jql": "((project in (JBIDE, JBDS) AND component in (docker)) OR (project = ERT AND component = 'Linux Tools')) ORDER BY Rank ASC"
+        "jql": "(project in (CRW) AND component in (build) AND status != Closed ORDER BY Rank ASC"
     }, 
     "ds_cdwtriage": {
         "description": "Issues are New and have no target release set", 
         "id": "12323016", 
-        "jql": "project = JBDS AND status = New AND ('Target Release' is EMPTY OR 'CDW release' in ('?'))"
+        "jql": "project = CRW AND status = New AND ('Target Release' is EMPTY OR 'CDW release' in ('?'))"
     }, 
     "ds_freeze": {
         "description": "Issues for next freeze", 
         "id": "12323031", 
-        "jql": "((project = JBIDE AND fixVersion in ( %(jbide_freeze_versions)s )) OR (project = JBDS AND fixVersion in ( %(jbds_freeze_versions)s )))"
+        "jql": "((project = CRW AND fixVersion in ( %(crw_freeze_versions)s )) OR (project = CRW AND fixVersion in ( %(crw_freeze_versions)s )))"
     }, 
     "ds_latest_freeze": {
         "description": "Issues for next freeze", 
         "id": "12324091", 
-        "jql": "((project = JBIDE AND fixVersion in ( %(jbide_latest_freeze_versions)s )) OR (project = JBDS AND fixVersion in ( %(jbds_latest_freeze_versions)s )))"
+        "jql": "((project = CRW AND fixVersion in ( %(crw_latest_freeze_versions)s )) OR (project = CRW AND fixVersion in ( %(crw_latest_freeze_versions)s )))"
     }, 
     "ds_lint_illegalfixversion": {
         "description": "illegal fix versions", 
         "id": "12323048", 
-        "jql": "(project = JBIDE AND (fixVersion in ( %(jbide_bucket_versions)s ) OR fixVersion is EMPTY) OR project = JBDS AND (fixVersion in ( %(jbds_bucket_versions)s ) OR fixVersion is EMPTY)) AND resolution = done"
+        "jql": "(project = CRW AND (fixVersion in ( %(crw_bucket_versions)s ) OR fixVersion is EMPTY) OR project = CRW AND (fixVersion in ( %(crw_bucket_versions)s ) OR fixVersion is EMPTY)) AND resolution = done"
     }, 
     "ds_lint_nocomponent": {
         "description": "Unresolved issues without components", 
         "id": "12323047", 
-        "jql": "project in (JBIDE,JBDS) and component is EMPTY AND resolution is EMPTY"
+        "jql": "project in (CRW) and component is EMPTY AND resolution is EMPTY"
     }, 
     "ds_lint_unresolved_in_release": {
         "description": "Unresolved issues in already released versions", 
         "id": "12323049", 
-        "jql": "project in (JBIDE, JBDS) and fixVersion in releasedVersions() and resolution is empty"
+        "jql": "project in (CRW) and fixVersion in releasedVersions() and resolution is empty"
     }, 
     "ds_maint": {
-        "description": "Current project+versions for JBIDE/JBDS maintenance", 
+        "description": "Current project+versions for CRW maintenance", 
         "id": "12323017", 
-        "jql": "((project = JBIDE AND fixVersion in ( %(jbide_maint_versions)s )) OR (project = JBDS AND fixVersion in ( %(jbds_maint_versions)s )))"
+        "jql": "((project = CRW AND fixVersion in ( %(crw_maint_versions)s )) OR (project = CRW AND fixVersion in ( %(crw_maint_versions)s )))"
     }, 
     "ds_master": {
-        "description": "Current project+versions for JBIDE/JBDS master stream", 
+        "description": "Current project+versions for CRW master stream", 
         "id": "12323021", 
-        "jql": "((project = JBIDE AND fixVersion in ( %(jbide_master_versions)s )) OR (project = JBDS AND fixVersion in ( %(jbds_master_versions)s )))"
+        "jql": "((project = CRW AND fixVersion in ( %(crw_master_versions)s )) OR (project = CRW AND fixVersion in ( %(crw_master_versions)s )))"
     }, 
     "ds_mystuff": {
         "description": "Issues assigned to current user or in a component lead by current user.", 
@@ -72,12 +62,12 @@
     "ds_next_maint": {
         "description": "Issues for next development in maintenance or master", 
         "id": "12323056", 
-        "jql": "((project = JBIDE AND fixVersion in (  %(jbide_next_maint_versions)s )) OR (project = JBDS AND fixVersion in ( %(jbds_next_maint_versions)s )))"
+        "jql": "((project = CRW AND fixVersion in (  %(crw_next_maint_versions)s )) OR (project = CRW AND fixVersion in ( %(crw_next_maint_versions)s )))"
     }, 
     "ds_next_master": {
         "description": "Issues for next development in maintenance or master", 
         "id": "12323057", 
-        "jql": "((project = JBIDE AND fixVersion in (  %(jbide_next_master_versions)s )) OR (project = JBDS AND fixVersion in ( %(jbds_next_master_versions)s )))"
+        "jql": "((project = CRW AND fixVersion in (  %(crw_next_master_versions)s )) OR (project = CRW AND fixVersion in ( %(crw_next_master_versions)s )))"
     }, 
     "ds_respin": {
         "description": "Issues included in a respin (has label containing 'respin-[a-k]')", 
