@@ -1,82 +1,66 @@
 {
-    "ds_board_crw_planning": {
+    "crw_board_crw_planning": {
         "description": "Issues for CRW backlog", 
-        "id": "12326938", 
         "jql": "project in (RACHEL, CRW) OR (project in (INTLY) AND labels = CRW) ORDER BY Rank ASC"
     }, 
-    "ds_board_buildnext": {
+    "crw_board_buildnext": {
         "description": "Issues for Build backlog", 
-        "id": "12326940", 
-        "jql": "(project in (CRW) AND component in (build) AND status != Closed ORDER BY Rank ASC"
+        "jql": "(project in (CRW) AND component in (build) AND resolution is null ORDER BY Rank ASC"
     }, 
     "ds_cdwtriage": {
         "description": "Issues are New and have no target release set", 
-        "id": "12323016", 
         "jql": "project = CRW AND status = New AND ('Target Release' is EMPTY OR 'CDW release' in ('?'))"
     }, 
-    "ds_freeze": {
+    "crw_freeze": {
         "description": "Issues for next freeze", 
-        "id": "12323031", 
         "jql": "((project = CRW AND fixVersion in ( %(crw_freeze_versions)s )) OR (project = CRW AND fixVersion in ( %(crw_freeze_versions)s )))"
     }, 
-    "ds_latest_freeze": {
+    "crw_latest_freeze": {
         "description": "Issues for next freeze", 
-        "id": "12324091", 
         "jql": "((project = CRW AND fixVersion in ( %(crw_latest_freeze_versions)s )) OR (project = CRW AND fixVersion in ( %(crw_latest_freeze_versions)s )))"
     }, 
-    "ds_lint_illegalfixversion": {
+    "crw_lint_illegalfixversion": {
         "description": "illegal fix versions", 
-        "id": "12323048", 
         "jql": "(project = CRW AND (fixVersion in ( %(crw_bucket_versions)s ) OR fixVersion is EMPTY) OR project = CRW AND (fixVersion in ( %(crw_bucket_versions)s ) OR fixVersion is EMPTY)) AND resolution = done"
     }, 
-    "ds_lint_nocomponent": {
+    "crw_lint_nocomponent": {
         "description": "Unresolved issues without components", 
-        "id": "12323047", 
         "jql": "project in (CRW) and component is EMPTY AND resolution is EMPTY"
     }, 
-    "ds_lint_unresolved_in_release": {
+    "crw_lint_unresolved_in_release": {
         "description": "Unresolved issues in already released versions", 
-        "id": "12323049", 
         "jql": "project in (CRW) and fixVersion in releasedVersions() and resolution is empty"
     }, 
     "ds_maint": {
         "description": "Current project+versions for CRW maintenance", 
-        "id": "12323017", 
         "jql": "((project = CRW AND fixVersion in ( %(crw_maint_versions)s )) OR (project = CRW AND fixVersion in ( %(crw_maint_versions)s )))"
     }, 
     "ds_master": {
         "description": "Current project+versions for CRW master stream", 
-        "id": "12323021", 
         "jql": "((project = CRW AND fixVersion in ( %(crw_master_versions)s )) OR (project = CRW AND fixVersion in ( %(crw_master_versions)s )))"
     }, 
     "ds_mystuff": {
         "description": "Issues assigned to current user or in a component lead by current user.", 
-        "id": "12323019", 
         "jql": "assignee = currentUser() or component in (componentsLeadByUser())"
     }, 
     "ds_needpmack": {
         "description": "Product manager have not yet approved a jira with a target release", 
-        "id": "12323018", 
         "jql": "'Target Release' is not EMPTY AND 'CDW pm_ack' = '?' AND resolution = Unresolved"
     }, 
     "ds_next_maint": {
         "description": "Issues for next development in maintenance or master", 
-        "id": "12323056", 
         "jql": "((project = CRW AND fixVersion in (  %(crw_next_maint_versions)s )) OR (project = CRW AND fixVersion in ( %(crw_next_maint_versions)s )))"
     }, 
     "ds_next_master": {
         "description": "Issues for next development in maintenance or master", 
-        "id": "12323057", 
         "jql": "((project = CRW AND fixVersion in (  %(crw_next_master_versions)s )) OR (project = CRW AND fixVersion in ( %(crw_next_master_versions)s )))"
     }, 
     "ds_respin": {
         "description": "Issues included in a respin (has label containing 'respin-[a-k]')", 
-        "id": "12323973", 
         "jql": "labels in ('respin-a', 'respin-b', 'respin-c', 'respin-d', 'respin-e', 'respin-f', 'respin-g', 'respin-h','respin-i', 'respin-j')"
     }, 
     "ds_unresolved": {
         "description": "Issues that are unresolved", 
-        "id": "12323020", 
         "jql": "resolution is EMPTY"
     }
 }

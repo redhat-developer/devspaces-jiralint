@@ -1,7 +1,7 @@
 [
   {
     "Illegal fix version for resolved issue": {
-      "jql": "(filter='ds_lint_illegalfixversion') AND updatedDate >= -720d",
+      "jql": "(filter='crw_lint_illegalfixversion') AND updatedDate >= -720d",
       "description": "please set a valid fix version for this resolved/closed issue - cannot be blank, LATER, or #.#.x. See http://bit.ly/aTUeGq for help. "
     }
   },
@@ -13,19 +13,19 @@
   },
   {
     "No component": {
-      "jql": "(filter='ds_lint_nocomponent')",
+      "jql": "(filter='crw_lint_nocomponent')",
       "description": "please ensure this issue has a proper component set."
     }
   },
   {
     "Unresolved issue with already released fix version": {
-      "jql": "filter = 'ds_lint_unresolved_in_release'",
+      "jql": "filter = 'crw_lint_unresolved_in_release'",
       "description": "This issue is set to be fixed in an already released version. Please triage."
     }
   },
   {
       "Unresolved issue for codefrozen version": {
-	  "jql": "filter = 'ds_freeze' and filter = 'ds_unresolved' AND updated <= -2d and (labels not in ('releasework') or labels is empty)",
+	  "jql": "filter = 'crw_freeze' and filter = 'ds_unresolved' AND updated <= -2d and (labels not in ('releasework') or labels is empty)",
 	  "description": "This issue is on a release that is codefrozen and no updates for 2 days nor labeled as 'releasework'. Should be triaged."
       }
   }
