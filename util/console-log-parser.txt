@@ -1,0 +1,42 @@
+# this file is a parser rule config file for use with the Jenkins plugin log-parser
+# for more info see https://plugins.jenkins.io/log-parser
+# if a line matches multiple times, the FIRST match will apply
+
+# to update this file inside Jenkins as a global config file:
+# 1. ssh to you@dev01 (or a host that can connect to Jenkins)
+# 2. if you have permission, switch to the hudson user: sudo su - hudson
+# 3. ssh to jenkins@${JENKINS_HOST}, then run:
+# 4. wget https://github.com/path/to/raw/util/console-log-parser.txt -O /var/lib/jenkins/jbosstools-console-log-parser.txt
+
+# to make the parser script available in Jenkins:
+# 1. go to https://${JENKINS_HOST}/configure
+# 2. search for "Console Output Parsing", and
+# 3. add the path to the log parser file downloaded above into /var/lib/jenkins/
+
+# warnings/errors to ignore
+ok /Couldn't create directory: Failure/
+
+# section starts: these are used to group errors and warnings found after the line; also creates a quick access link.
+start /====== handle_.+/
+
+# warnings
+warning /.+\\[WARNING\\].+/
+warning /[Ww]arning/
+warning /WARNING/
+warning /Connection refused/
+
+# errors
+error /.+FAILED: Fault:.+/
+error /.+buildContainer (noarch) failed.*/
+error / \\[ERROR\\] /
+error /exec returned: .+/
+error /non-zero code/
+error /ripgrep: Command failed/
+error /The following error occurred/
+error /Downloading ripgrep failed/
+error /API rate limit exceeded/
+error /error exit delayed from previous errors/
+error /tar: .+: No such file or directory/
+
+# match line starting with 'error ', case-insensitive
+error /(?i)^error /
