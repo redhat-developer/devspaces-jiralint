@@ -15,9 +15,11 @@
 
 # warnings/errors to ignore
 ok /Couldn't create directory: Failure/
+ok osbs.core - DEBUG - .+/
 
 # section starts: these are used to group errors and warnings found after the line; also creates a quick access link.
 start /====== handle_.+/
+start /.+INFO - --> .+/
 
 # warnings
 warning /.+\\[WARNING\\].+/
@@ -39,6 +41,9 @@ error /error exit delayed from previous errors/
 error /tar: .+: No such file or directory/
 error /.+ERROR - image build failed.+/
 error /.+ERROR - [bB]uild *step.+failed.+/
+error /.+ERROR: Failed.+/
+error /.+ECONNREFUSED.+/
+error /.+failed with exit code.+/
 
 # match line starting with 'error ', case-insensitive
 error /(?i)^error /
