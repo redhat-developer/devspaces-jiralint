@@ -44,6 +44,7 @@ error /.+ERROR - [bB]uild *step.+failed.+/
 error /.+ERROR: Failed.+/
 error /.+ECONNREFUSED.+/
 error /.+failed with exit code.+/
+error /Usage:  docker build.+/
 
 # match line starting with 'error ', case-insensitive
 error /(?i)^error /
