@@ -26,6 +26,7 @@ warning /.+\\[WARNING\\].+/
 warning /[Ww]arning/
 warning /WARNING/
 warning /Connection refused/
+warning /STATUS:UNKNOWN/
 
 # errors
 error /.+FAILED: Fault:.+/
@@ -45,6 +46,7 @@ error /.+ERROR: Failed.+/
 error /.+ECONNREFUSED.+/
 error /.+failed with exit code.+/
 error /Usage:  docker build.+/
+error /osbs.core - ERROR.+Unauthorized/
 
 # match line starting with 'error ', case-insensitive
 error /(?i)^error /
