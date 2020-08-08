@@ -47,6 +47,8 @@ error /.+ECONNREFUSED.+/
 error /.+failed with exit code.+/
 error /Usage:  docker build.+/
 error /osbs.core - ERROR.+Unauthorized/
+error /Kerberos authentication fails: unable to obtain a session/
+error /Could not execute container_build/
 
 # match line starting with 'error ', case-insensitive
 error /(?i)^error /
