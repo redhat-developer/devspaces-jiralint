@@ -8,8 +8,6 @@ from datetime import timedelta
 import pprint
 from xml.dom.minidom import Document
 from optparse import OptionParser
-
-
 from common import shared
 
 pp = pprint.PrettyPrinter(indent=4)
@@ -252,8 +250,8 @@ parser.add_option("-f", "--fromemail", dest="fromemail", default=None, help="ema
 parser.add_option("-t", "--toemail", dest="toemail", default=None, help="email address override to which to send all mail; if omitted, send to actual JIRA assignees")
 parser.add_option("-n", "--unassignedjiraemail", dest="unassignedjiraemail", default=None, help="email to use for unassigned JIRAs; required if fromemail is specified")
 parser.add_option("-m", "--smtphost", dest="smtphost", default=None, help="smtp host to use; required if fromemail is specified")
-parser.add_option("-d", "--dry-run", dest="dryrun", action="store_true", help="do everything but actually sending mail")
-parser.add_option("-v", "--verbose", dest="verbose", action="store_true", help="dump email bodies to console")
+parser.add_option("-d", "--dry-run" "--dryrun", dest="dryrun", action="store_true", help="do everything but actually sending mail")
+parser.add_option("-v", "--verbose", "--debug", dest="verbose", action="store_true", help="dump email bodies to console")
 
 (options, args) = parser.parse_args()
 
@@ -268,7 +266,7 @@ if (not options.jirauser or (not options.jirapwd and not options.jiratoken)):
     parser.error("Must set -u jirauser and either -p jirapwd or -k jiratoken")
 
 if options.fromemail and (not options.unassignedjiraemail or not options.smtphost):
-    parser.error("Must set both --unassignedjiraemail and --smpthost to send mail")
+    parser.error("Must set both --unassignedjiraemail (-n) and --smpthost (-m) to send mail")
 
 # store an array of username : email_address and componentid: component data we can use as a lookup table
 email_addresses = {}

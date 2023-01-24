@@ -1,53 +1,65 @@
 This repo contains utilities that use Jenkins for early warnings/error detection in jiras and other jira tools.
 
 == Contents of this repository 
-- *README*: this file
+- *jiralint.py*: takes a report.json to render jira query results into junit.xml test reports, and optionally send emails to component owners
+- *read_filters.py*, *setup_filters.py*, *update_filters_permissions.py* - tools to manage filters
 
-- *render-testcase.py*: takes a report.json to render jira query results into junit.xml test reports
+- *constants.json*: JIRA version configuration
+- **.json*: filters and reports used to detect stale/non-triaged/incorrect jiras
 
-- **.json*: reports used by the Eclipse Che / Dev Spaces team for detecting stale/non-triaged/incorrect jiras
+== Using jiralint
 
-Steps to use it:
-
-. Create a <reportname>.json file with the following format:
-
-  [
+. Create a reports-<name>.json file with the following format (see examples in link:reports-daily.json[reports-daily.json] and link:reports-weekly.json[reports-weekly.json]):
++
+```
+[
   {
     "nofixversion": {
-	"jql": "project = CRW AND fixVersion is EMPTY AND createdDate <= -7d",
-        "description": "Issues have no fix version and was created 7 dags ago. Please triage."
+  "jql": "project = CRW AND fixVersion is EMPTY AND createdDate <= -7d",
+        "description": "Issues have no fix version and was created 7 more than days ago - please triage."
     }
   },
   {
     "nocomponent": {
       "jql": "project in (CRW) AND component is EMPTY AND resolution is EMPTY",
-      "description": "Issue has no component - please triage and make sure it is put in the right component or set of components."
+      "description": "Issue has no component - please triage."
     }
   }
-  ]
-
+]
+```
 + 
 Each entry has a report name used for identifying its results and then a jql for the query and finally a description which is added to each jira "error" message.
   
-. Test it by running:
-
-   ```
-   $ python render-testcase.py -u user -p secret -s jiraserver -r <reportname>.json
-   ```
+. Test it by running with `--verbose` or `-v` and `--dry-run` or `-d`:
 +
-Now for each report a -test.xml file will be created containing "test failures" for each jira matching the result.
+```
+$ python jiralint.py -u jirauser -k jiratoken -r reports-<name>.json -l <max num of issues>
+```
++
+For each report, a `*-test.xml` file will be created containing test failures for each jira matching the queries.
 
-. Setup a Jenkins build which executes the above script and enable junit reporting and you got automatic notification and tracking to help improve your jira content.
+. To send email for the failures, use these flags:
++
+```
+    --fromemail             email address from which to send mail; if omitted, no mail will be sent
+    --toemail               email address override to which to send all mail; if omitted, send to assignees
+    --smtphost              smtp host to use; required if fromemail is specified
+    --unassignedjiraemail   email to use for unassigned JIRAs; required if fromemail is specified
+```
++ 
+If sending mail, a `.log` file will be created for each `*-test.xml`.
+
+. A Jenkins job is available to check jira daily:
+
+  * https://main-jenkins-csb-crwqe.apps.ocp-c1.prod.psi.redhat.com/job/DS_CI/job/Releng/job/jiralint/
 
 
 == Updating filters
 
-To add a completely new filter requires a manual step since jira for some obscure reason does not support looking up filters by name.
+To add a completely new filter requires a manual step, as jira does not currently support looking up filters by name (only by `id`).
 
 When a new filter is added you have to do the following:
 
 . Add it without an 'id' to the `.json` file
 . Run the script, ie. `python setup_filters.py  -u jiralint -p secret -f filters.json,filters-composite.json`
-. Commit the updated `.json` file which now will contain the newly created filter
-
-Have fun! 
+. Commit changes to `.json` files with updated filters

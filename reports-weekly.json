@@ -2,25 +2,25 @@
   {
     "Illegal fix version for resolved issue": {
       "jql": "(filter='crw_lint_illegalfixversion') AND updatedDate >= -720d",
-      "description": "please set a valid fix version for this resolved/closed issue - cannot be blank, LATER, or #.x. See https://bit.ly/jiratriage for help."
+      "description": "Please set a valid fix version for this resolved/closed issue - cannot be blank, LATER, or #.x. See https://bit.ly/jiratriage for help."
     }
   },
   {
     "No fix version": {
       "jql": "project in (CRW) AND fixVersion is EMPTY AND resolution is EMPTY and createdDate <= -7d",
-      "description": "please triage this issue - it is more than 7 days old and has no fix version."
+      "description": "Please triage this issue - it is more than 7 days old and has no fix version."
     }
   },
   {
     "No component": {
       "jql": "(filter='crw_lint_nocomponent')",
-      "description": "please ensure this issue has a proper component set."
+      "description": "Please ensure this issue has a component set."
     }
   },
   {
     "Unresolved issue with already released fix version": {
       "jql": "filter = 'crw_lint_unresolved_in_release'",
-      "description": "This issue is set to be fixed in an already released version. Please triage: resolve/close if done, move to next release if in progress, or move to 3.x backlog if not."
+      "description": "This issue is set to be resolved for a previously released version. Please triage: resolve/close if done, move to next release if in progress, or move to 3.x backlog if not."
     }
   },
   {
