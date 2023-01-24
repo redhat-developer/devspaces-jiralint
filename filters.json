@@ -1,66 +1,67 @@
 {
-    "crw_board_crw_planning": {
-        "description": "Issues for CRW backlog", 
-        "jql": "project in (CRW) ORDER BY Rank ASC"
-    }, 
     "crw_board_buildnext": {
-        "description": "Issues for Build backlog", 
-        "jql": "project in (CRW) AND component in ('productization: build & internals') AND resolution is null ORDER BY Rank ASC"
-    }, 
+        "description": "Issues for Build backlog",
+        "id": "12405822",
+        "jql": "project in (CRW) AND component = 12330941 AND resolution is null ORDER BY Rank DESC"
+    },
+    "crw_board_crw_planning": {
+        "description": "Issues for CRW backlog",
+        "id": "12405821",
+        "jql": "project in (CRW) ORDER BY Rank ASC"
+    },
     "crw_cdwtriage": {
-        "description": "Issues are New and have no target release set", 
+        "description": "Issues are New and have no target release set",
+        "id": "12405735",
         "jql": "project = CRW AND status = Open AND fixversion is EMPTY"
-    }, 
-    "crw_freeze": {
-        "description": "Issues for next freeze", 
-        "jql": "project = CRW AND fixVersion in ( %(crw_freeze_versions)s )"
-    }, 
-    "crw_latest_freeze": {
-        "description": "Issues for next freeze", 
-        "jql": "project = CRW AND fixVersion in ( %(crw_latest_freeze_versions)s )"
-    }, 
-    "crw_lint_illegalfixversion": {
-        "description": "illegal fix versions", 
-        "jql": "project = CRW AND (fixVersion in ( %(crw_bucket_versions)s ) OR fixVersion is EMPTY) AND resolution = done"
-    }, 
-    "crw_lint_nocomponent": {
-        "description": "Unresolved issues without components", 
-        "jql": "project in (CRW) and component is EMPTY AND resolution is EMPTY"
-    }, 
-    "crw_lint_unresolved_in_release": {
-        "description": "Unresolved issues in already released versions", 
-        "jql": "project in (CRW) and fixVersion in releasedVersions() and resolution is empty"
-    }, 
-    "crw_stable": {
-        "description": "Current project+versions for DS 3.y latest", 
-        "jql": "project = CRW AND fixVersion in ( %(crw_stable_versions)s )"
-    }, 
+    },
     "crw_fast": {
-        "description": "Current project+versions for DS 3.x next", 
+        "description": "Current project+versions for DS 3.x next",
+        "id": "12405736",
         "jql": "project = CRW AND fixVersion in ( %(crw_fast_versions)s )"
-    }, 
+    },
+    "crw_freeze": {
+        "description": "Issues for next freeze",
+        "id": "12405830",
+        "jql": "project = CRW AND fixVersion in ( %(crw_freeze_versions)s )"
+    },
+    "crw_lint_illegalfixversion": {
+        "description": "illegal fix versions",
+        "id": "12405838",
+        "jql": "project = CRW AND (fixVersion in ( %(crw_bucket_versions)s ) OR fixVersion is EMPTY) AND resolution = done"
+    },
+    "crw_lint_nocomponent": {
+        "description": "Unresolved issues without components",
+        "id": "12405842",
+        "jql": "project in (CRW) and component is EMPTY AND resolution is EMPTY"
+    },
+    "crw_lint_unresolved_in_release": {
+        "description": "Unresolved issues in already released versions",
+        "id": "12405845",
+        "jql": "project in (CRW) and fixVersion in releasedVersions() and resolution is empty"
+    },
     "crw_mystuff": {
-        "description": "Issues assigned to current user or in a component lead by current user.", 
+        "description": "Issues assigned to current user or in a component lead by current user.",
+        "id": "12405846",
         "jql": "assignee = currentUser() or component in (componentsLeadByUser())"
-    }, 
-    "crw_needpmack": {
-        "description": "Product manager have not yet approved a jira with a target release", 
-        "jql": "'Target Release' is not EMPTY AND 'CDW pm_ack' = '?' AND resolution = Unresolved"
-    }, 
-    "crw_next_stable": {
-        "description": "Issues for 3.yy.z / :latest", 
-        "jql": "project = CRW AND fixVersion in (  %(crw_next_stable_versions)s )"
-    }, 
+    },
     "crw_next_fast": {
-        "description": "Issues for 3.x.z / :next", 
+        "description": "Issues for 3.x.z / :next",
+        "id": "12405831",
         "jql": "project = CRW AND fixVersion in (  %(crw_next_fast_versions)s )"
-    }, 
-    "crw_respin": {
-        "description": "Issues included in a respin (has label containing 'respin-[a-k]')", 
-        "jql": "labels in ('respin-a', 'respin-b', 'respin-c', 'respin-d', 'respin-e', 'respin-f', 'respin-g', 'respin-h','respin-i', 'respin-j')"
-    }, 
+    },
+    "crw_next_stable": {
+        "description": "Issues for 3.yy.z / :latest",
+        "id": "12405829",
+        "jql": "project = CRW AND fixVersion in (  %(crw_next_stable_versions)s )"
+    },
+    "crw_stable": {
+        "description": "Current project+versions for DS 3.y latest",
+        "id": "12405832",
+        "jql": "project = CRW AND fixVersion in ( %(crw_stable_versions)s )"
+    },
     "crw_unresolved": {
-        "description": "Issues that are unresolved", 
-        "jql": "resolution is EMPTY"
+        "description": "Issues that are unresolved",
+        "id": "12405828",
+        "jql": "project = CRW AND resolution is EMPTY"
     }
 }

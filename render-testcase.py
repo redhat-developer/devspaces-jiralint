@@ -20,7 +20,7 @@ def fetch_email(username, fallback, email_addresses):
     else:
         found = None
         payload = {'username': username}
-        user_data = shared.jiraquery(options, "/rest/api/2/user?" + urllib.parse.urlencode(payload))
+        user_data = shared.jiraquery(options, "/rest/api/latest/user?" + urllib.parse.urlencode(payload))
         if 'emailAddress' in user_data:
             found = str(user_data['emailAddress'])
             email_addresses[username]=found
@@ -85,12 +85,12 @@ def render(issue_type, issue_description, jira_env, issues, jql, options, email_
             component_lead_names = ""
             for component in fields['components']:
                 # print component['id']
-                # https://issues.redhat.com/rest/api/2/component/12311294
+                # https://issues.redhat.com/rest/api/latest/component/12311294
                 if component['id'] in components:
                     component_data = components[component['id']]
                 else:
                     # print 'Query ' + component['name'] + ' component lead'
-                    component_data = shared.jiraquery(options, "/rest/api/2/component/" + component['id'])
+                    component_data = shared.jiraquery(options, "/rest/api/latest/component/" + component['id'])
                     components[component['id']] = component_data
                     
                 component_name = str(component_data['name'])
@@ -239,7 +239,7 @@ def render(issue_type, issue_description, jira_env, issues, jql, options, email_
 
     return email_addresses
 
-usage = "usage: %prog -u <username> -p <password> -r <report.json>\nGenerates junit test report based on issues returned from queries."
+usage = "usage: %prog -u <jirauser> -k <jiratoken> -r <report.json>\nGenerates junit test report based on issues returned from queries."
 
 parser = OptionParser(usage)
 parser.add_option("-u", "--user", dest="jirauser", help="username")
@@ -264,11 +264,11 @@ if (not options.jirauser or not options.jirapwd) and "userpass" in os.environ:
     options.jirauser = userpass_bits[0]
     options.jirapwd = userpass_bits[1]
 
-if (not options.jirauser or not options.jirapwd) and not options.jiratoken:
-    parser.error("Missing username or password")
+if (not options.jirauser or (not options.jirapwd and not options.jiratoken)):
+    parser.error("Must set -u jirauser and either -p jirapwd or -k jiratoken")
 
 if options.fromemail and (not options.unassignedjiraemail or not options.smtphost):
-    parser.error("Need to specify both --unassignedjiraemail and --smpthost to send mail")
+    parser.error("Must set both --unassignedjiraemail and --smpthost to send mail")
 
 # store an array of username : email_address and componentid: component data we can use as a lookup table
 email_addresses = {}
@@ -284,7 +284,7 @@ if options.reportfile:
             if options.verbose:
                 print("Check for '"  + issue_type.lower() + "': https://issues.redhat.com/issues/?jql=" + urllib.parse.quote(fields['jql']))
             payload = {'jql': fields['jql'], 'maxResults' : options.maxresults}
-            data = shared.jiraquery(options, "/rest/api/2/search?" + urllib.parse.urlencode(payload))
+            data = shared.jiraquery(options, "/rest/api/latest/search?" + urllib.parse.urlencode(payload))
             if 'issues' in data:
                 print(str(len(data['issues'])) + " issues found with '" + issue_type.lower() + "': https://issues.redhat.com/issues/?jql=" + urllib.parse.quote(fields['jql']))
                 if options.verbose:

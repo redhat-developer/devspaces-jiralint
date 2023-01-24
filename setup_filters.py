@@ -1,6 +1,6 @@
 from optparse import OptionParser
 from common import shared
-import urllib2
+import urllib3
 import re
 import json
 import sys
@@ -24,7 +24,7 @@ def loadConstants():
             method = getattr(sys.modules[__name__], fields['function'])
             del fields['function']
             constants[name] = method(**fields)
-            print(name + "->" + constants[name])
+            print("  " + name + " -> " + str(constants[name]))
     
     return constants
 
@@ -53,7 +53,11 @@ def hasFieldOrNot(field, flag,v):
     return r
 
 def dumpVersions(foundversions):
-    return str(len(foundversions))  + "->" + ", ".join(map(lambda v: v['name'], foundversions))
+    if foundversions:
+        return str(len(foundversions))  + " @ " + ", ".join(map(lambda v: v['name'], foundversions))
+    else:
+        # print("foundversions is null")
+        return ""
 
 
 def listVersions(project, pattern=".*", released=None, hasReleaseDate=None, archived=None, hasStartDate=None, codefrozen=None, lowerLimit=None, upperLimit=None, index=None):
@@ -92,37 +96,39 @@ def listVersions(project, pattern=".*", released=None, hasReleaseDate=None, arch
         if versionmatch.match(version['name']):
             foundversions.append(version)
 
-    print("after versionmatch: " + dumpVersions(foundversions))
+    if options.verbose:
+        print("  after versionmatch: " + str(dumpVersions(foundversions)))
     
     if released is not None:
-        foundversions = filter(lambda v: released == v['released'], foundversions)
+        foundversions = list(filter(lambda v: released == v['released'], foundversions))
         if options.verbose:
-            print("after released: " + dumpVersions(foundversions))
+            print("  after released ("+str(released)+"):")
+            print(dumpVersions(foundversions))
     
     if hasReleaseDate is not None:
-        foundversions = filter(lambda v: hasFieldOrNot('releaseDate', hasReleaseDate, v), foundversions)
+        foundversions = list(filter(lambda v: hasFieldOrNot('releaseDate', hasReleaseDate, v), foundversions))
         if options.verbose:
-            print("after hasReleaseDate: " + dumpVersions(foundversions))
+            print("  after hasReleaseDate: " + str(dumpVersions(foundversions)))
     
     if hasStartDate is not None:
-        foundversions = filter(lambda v: hasFieldOrNot('startDate', hasStartDate, v), foundversions)
+        foundversions = list(filter(lambda v: hasFieldOrNot('startDate', hasStartDate, v), foundversions))
         if options.verbose:
-            print("after hasStartDate: " + dumpVersions(foundversions))
+            print("  after hasStartDate: " + str(dumpVersions(foundversions)))
     
     if archived is not None:
-        foundversions = filter(lambda v: archived == v['archived'], foundversions)
+        foundversions = list(filter(lambda v: archived == v['archived'], foundversions))
         if options.verbose:
-            print("after archived: " + dumpVersions(foundversions))
+            print("  after archived: " + str(dumpVersions(foundversions)))
 
     if codefrozen is not None:
-        foundversions = filter(lambda v: isCodefrozenToday(v, codefrozen), foundversions)
+        foundversions = list(filter(lambda v: isCodefrozenToday(v, codefrozen), foundversions))
         if options.verbose:
-            print("after codefrozen: " + dumpVersions(foundversions))
+            print("after codefrozen: " + str(dumpVersions(foundversions)))
     
     if upperLimit or lowerLimit:
         foundversions = foundversions[lowerLimit:upperLimit]
         if options.verbose:
-            print("after limits: " + dumpVersions(foundversions))
+            print("after limits: " + str(dumpVersions(foundversions)))
     
     if index is not None:
         try:
@@ -130,30 +136,29 @@ def listVersions(project, pattern=".*", released=None, hasReleaseDate=None, arch
         except IndexError:
             foundversions = []
         if options.verbose:
-            print("after index: " + dumpVersions(foundversions))
+            print("after index: " + str(dumpVersions(foundversions)))
     
     foundversions = map(lambda v: v['name'], foundversions)
     
-    return ", ".join(foundversions)
+    return ", ".join(f"'{w}'" for w in foundversions)
 
     
 
-usage = "usage: %prog -u <jirauser> -p <jirapwd> -t <jiratkn> -f <filters.json>\nCreate/maintain set of filters defined in filters.json."
+usage = "usage: %prog -u <jirauser> -k <jiratoken> -f <filters.json>\nCreate/maintain set of filters defined in filters.json."
 
 parser = OptionParser(usage)
 
 #todo: move the shared options to common ?
 parser.add_option("-u", "--user", dest="jirauser", help="jirauser")
 parser.add_option("-p", "--pwd", dest="jirapwd", help="jirapwd")
-parser.add_option("-t", "--token", dest="jiratoken", help="jiratoken")
+parser.add_option("-k", "--token", dest="jiratoken", help="jiratoken")
 parser.add_option("-s", "--server", dest="jiraserver", default="https://issues.redhat.com", help="Jira instance")
 parser.add_option("-f", "--filters", dest="filterfiles", default="filters.json", help="comma separated list of filters to setup")
 parser.add_option("-v", "--verbose", dest="verbose", action="store_true", help="more verbose logging")
 (options, args) = parser.parse_args()
     
-if (not options.jirauser or not options.jirapwd) and not options.jiratoken:
-    parser.error("Missing jirauser or jirapwd")
-
+if (not options.jirauser or (not options.jirapwd and not options.jiratoken)):
+    parser.error("Must set -u jirauser and either -p jirapwd or -k jiratoken")
 
 if options.filterfiles:
     #print "Force enabling global shared filters. Will not have any effect if user is not allowed to globally share objects in jira."
@@ -163,6 +168,7 @@ if options.filterfiles:
 
     allfilters = {}
     filterfiles = options.filterfiles.split(',')
+    print("")
     for filterfile in filterfiles:
         print("Processing filters found in " + filterfile)
         filters = json.load(open(filterfile, 'r'))
@@ -170,6 +176,7 @@ if options.filterfiles:
         newfilters = filters.copy()
         for name, fields in filters.items():
             try:
+                print("")
                 print("filter " + name)
                 data = {
                     'name': name,
@@ -179,18 +186,18 @@ if options.filterfiles:
                 }
                 
                 if 'id' in fields:
-                    print('updating filter ' + name + "->" + data['jql'])
+                    print('  updating filter ' + name + " -> " + data['jql'])
                     fields['id'] = shared.jiraupdate(options, "/rest/api/latest/filter/" + fields['id'], data)['id']
                 else:
-                    print('creating filter ' + name + "->" + data['jql'])
+                    print('creating filter ' + name + " -> " + data['jql'])
                     fields['id'] = shared.jirapost(options, "/rest/api/latest/filter", data)['id']
                 allfilters[name] = fields
                 newfilters[name] = fields
                 saveFilters(filterfile, newfilters) # saving every succesful iteration to not loose a filter id 
-            except urllib2.HTTPError as e:
+            except urllib3.exceptions.HTTPError as e:
                 print("Problem with setting up filter %s with JQL = %s" % (data['name'], data['jql']))
 
-    print("Jira filters in asciidoc: ")
+    print("\nJira filters in asciidoc:\n")
     print("[options=\"header\"]")
     print(".Jira Filters")
     print("|===")

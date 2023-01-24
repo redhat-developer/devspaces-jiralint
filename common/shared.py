@@ -8,7 +8,7 @@ def jiraquery(options, url):
     }
     
     if options.verbose:
-        print("Query: " + options.jiraserver + url)
+        print("  Query: " + options.jiraserver + url)
    
     response = requests.request("GET", options.jiraserver + url, headers=headers)
 
@@ -27,8 +27,9 @@ def jirapost(options, url, data):
     }
     
     if options.verbose:
-        print("Post: " + options.jiraserver + url)
-        print("Data: " + jdata)
+        print("  Post: " + options.jiraserver + url)
+        print("  Raw Data: " + str(data))
+        print("  JSON Data: " + jdata)
 
     response = ''
     
@@ -41,7 +42,7 @@ def jirapost(options, url, data):
         )
         response.raise_for_status()
     except requests.exceptions.HTTPError as e:
-        print("Http Error:", e)
+        print("  Http Error:", e)
         raise(e)
 
     if options.verbose:
@@ -59,8 +60,9 @@ def jiraupdate(options, url, data):
     }
     
     if options.verbose:
-        print("Post: " + options.jiraserver + url)
-        print("Data: " + jdata)
+        print("  Post: " + options.jiraserver + url)
+        print("  Raw Data: " + str(data))
+        print("  JSON Data: " + jdata)
 
     response = ''
     
@@ -73,7 +75,7 @@ def jiraupdate(options, url, data):
         )
         response.raise_for_status()
     except requests.exceptions.HTTPError as e:
-        print("Http Error:", e)
+        print("  Http Error:", e)
         raise(e)
     
     if options.verbose:
