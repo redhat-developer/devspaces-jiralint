@@ -2,7 +2,7 @@
   {
     "Illegal fix version for resolved issue": {
       "jql": "(filter='crw_lint_illegalfixversion') AND updatedDate >= -720d",
-      "description": "please set a valid fix version for this resolved/closed issue - cannot be blank, LATER, or #.#.x. See http://bit.ly/aTUeGq for help. "
+      "description": "please set a valid fix version for this resolved/closed issue - cannot be blank, LATER, or #.x. See https://bit.ly/jiratriage for help."
     }
   },
   {
@@ -20,13 +20,25 @@
   {
     "Unresolved issue with already released fix version": {
       "jql": "filter = 'crw_lint_unresolved_in_release'",
-      "description": "This issue is set to be fixed in an already released version. Please triage."
+      "description": "This issue is set to be fixed in an already released version. Please triage: resolve/close if done, move to next release if in progress, or move to 3.x backlog if not."
     }
   },
   {
-      "Unresolved issue for codefrozen version": {
-	  "jql": "filter = 'crw_freeze' and filter = 'ds_unresolved' AND updated <= -2d and (labels not in ('releasework') or labels is empty)",
-	  "description": "This issue is on a release that is codefrozen and no updates for 2 days nor labeled as 'releasework'. Should be triaged."
-      }
+    "Unresolved Dev issue for codefrozen version": {
+  	  "jql": "filter = 'crw_freeze' and filter = 'crw_unresolved' and (labels not in ('releasework') or labels is empty) and type != 'QE Task' AND component not in (testing, docs) and summary !~ 'RN'",
+	    "description": "This development issue is for a release that is codefrozen and there have been updates for 7 days. Should be triaged."
+    }
+  },
+  {
+    "Unresolved QE issue for codefrozen version, over 1 wk old": {
+      "jql": "filter = 'crw_freeze' and filter = 'crw_unresolved' AND updatedDate <= -7d and (labels not in ('releasework') or labels is empty) and (type = 'QE Task' OR component = testing)",
+      "description": "This testing issue is for a release that is codefrozen and there have been updates for 7 days. Should be triaged."
+    }
+  },
+  {
+    "Unresolved Doc issue for codefrozen version, over 1 wk old": {
+      "jql": "filter = 'crw_freeze' and filter = 'crw_unresolved' AND updatedDate <= -7d and (labels not in ('releasework') or labels is empty) and (component = docs or summary ~ 'RN' or 'Release Note Status' in ('In Progress',Proposed))",
+      "description": "This documentation issue is for a release that is codefrozen and there have been updates for 7 days. Should be triaged."
+    }
   }
 ]

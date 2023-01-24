@@ -1,9 +1,11 @@
 This repo contains utilities that use Jenkins for early warnings/error detection in jiras and other jira tools.
 
-README     	     this file
-render-testcase.py   takes a report.json to render jira query results into junit.xml test reports
-*.json               reports used by CRW team for detecting stale/non-triaged/incorrect jiras
-bzira.py             utility to make bugs returned by bugzilla query show up in jira to use in sprint-planning.
+== Contents of this repository 
+- *README*: this file
+
+- *render-testcase.py*: takes a report.json to render jira query results into junit.xml test reports
+
+- **.json*: reports used by the Eclipse Che / Dev Spaces team for detecting stale/non-triaged/incorrect jiras
 
 Steps to use it:
 
@@ -12,7 +14,7 @@ Steps to use it:
   [
   {
     "nofixversion": {
-	"jql": "(project = CRW AND fixVersion is EMPTY AND createdDate <= -7d",
+	"jql": "project = CRW AND fixVersion is EMPTY AND createdDate <= -7d",
         "description": "Issues have no fix version and was created 7 dags ago. Please triage."
     }
   },
@@ -24,41 +26,18 @@ Steps to use it:
   }
   ]
 
-+
++ 
 Each entry has a report name used for identifying its results and then a jql for the query and finally a description which is added to each jira "error" message.
-
+  
 . Test it by running:
 
    ```
-   $ python -u user -p secret -s jiraserver -r <reportname>.json
+   $ python render-testcase.py -u user -p secret -s jiraserver -r <reportname>.json
    ```
 +
 Now for each report a -test.xml file will be created containing "test failures" for each jira matching the result.
 
 . Setup a Jenkins build which executes the above script and enable junit reporting and you got automatic notification and tracking to help improve your jira content.
-
-
-== Bugzilla in Jira for sprint planning
-
-`bzira.py` is an experiemnt that takes the issues returned by a bugzilla query to make available in jira for prioritization.
-Main usecase is for CRW team to see Eclipse bugzillas together with its planned jiras for sprint planning.
-
-The created issues are purely intended for sprint planning - not for mirroring. This makes the setup and mechanics simpler and require much less issues like
-double comments etc.
-
-Requirements:
-
-As root, run pip to install new or upgrade existing python modules:
-
-`# pip install --upgrade bugzilla bugzillatools python-bugzilla jiraclient jira-python jira jiracli jira-cli requests`
-
-If that doesn't work, see complete list of python modules here: https://gist.github.com/nickboldt/a3ba926186fb6b7442f6/d4297f984871ea8dbd09ad15ac197fb72e709053
-
-To run bzira:
-
-`python -i bzira.py -u username -p password`
-
-For now this script is hardcoded to staging Jira and a single RHT query.
 
 
 == Updating filters
@@ -71,4 +50,4 @@ When a new filter is added you have to do the following:
 . Run the script, ie. `python setup_filters.py  -u jiralint -p secret -f filters.json,filters-composite.json`
 . Commit the updated `.json` file which now will contain the newly created filter
 
-Have fun!
+Have fun! 

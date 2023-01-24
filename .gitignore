@@ -1,3 +1,7 @@
 *.pyc
 *-test.xml
 *.log
+lib/
+lib64/
+bin/
+pyvenv.cfg

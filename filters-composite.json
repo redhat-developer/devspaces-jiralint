@@ -1,58 +1,58 @@
 {
-    "ds_board_everything": {
+    "crw_board_everything": {
         "description": "board for everything", 
         "jql": "Project in (CRW) AND status != Closed ORDER BY Rank ASC"
     }, 
-    "ds_board_everythingelse": {
+    "crw_board_everythingelse": {
         "description": "board for everything else not part of other boards", 
-        "jql": "Project in (CRW) and not filter=ds_board_crw_planning and not filter=ds_board_buildnext AND status != Closed ORDER BY Rank ASC"
+        "jql": "Project in (CRW) and not filter=crw_board_crw_planning and not filter=crw_board_buildnext AND status != Closed ORDER BY Rank ASC"
     }, 
     "crw_freeze_unresolved": {
         "description": "Unresolved issues in frozen versions", 
-        "jql": "filter='crw_freeze' and filter='ds_unresolved'"
+        "jql": "filter='crw_freeze' and filter='crw_unresolved'"
     }, 
-    "ds_maint_noack": {
+    "crw_maint_noack": {
         "description": "issues that are missing ack or nack", 
-        "jql": "filter='ds_maint' and 'CDW release' = '?'"
+        "jql": "filter='crw_maint' and 'CDW release' = '?'"
     }, 
-    "ds_master_noack": {
+    "crw_master_noack": {
         "description": "issues that are missing ack or nack", 
-        "jql": "filter='ds_master' and 'CDW release' = '?'"
+        "jql": "filter='crw_master' and 'CDW release' = '?'"
     }, 
-    "ds_my_freeze": {
+    "crw_my_freeze": {
         "description": "Issues assigned or lead by user that is marked for freeze", 
-        "jql": "filter='ds_mystuff' and filter='crw_freeze'"
+        "jql": "filter='crw_mystuff' and filter='crw_freeze'"
     }, 
-    "ds_my_freeze_unresolved": {
+    "crw_my_freeze_unresolved": {
         "description": "Issues assigned or lead by user that is marked for freeze and unresolved", 
-        "jql": "filter='ds_mystuff' and filter='crw_freeze' and filter='ds_unresolved'"
+        "jql": "filter='crw_mystuff' and filter='crw_freeze' and filter='crw_unresolved'"
     }, 
-    "ds_my_latertriage": {
+    "crw_my_latertriage": {
         "description": "Stuff in .x or LATER buckets", 
-        "jql": "filter='ds_mystuff' and filter='ds_unresolved' and (project = 'CRW' and fixversion in ( %(crw_bucket_versions)s ) or (project = 'CRW' and fixversion in ( %(crw_bucket_versions)s )))"
+        "jql": "filter='crw_mystuff' and filter='crw_unresolved' and project = CRW and fixversion in ( %(crw_bucket_versions)s )"
     }, 
-    "ds_my_needtriage": {
+    "crw_my_needtriage": {
         "description": "Non triaged stuff that I'm assigned or leading", 
-        "jql": "filter='ds_mystuff' and filter='ds_needtriage'"
+        "jql": "filter='crw_mystuff' and filter='crw_needtriage'"
     }, 
-    "ds_my_next_maint_unresolved": {
+    "crw_my_next_maint_unresolved": {
         "description": "my unresolved work for next maintanence", 
-        "jql": "filter='ds_mystuff' and filter='ds_next_maint' and filter='ds_unresolved'"
+        "jql": "filter='crw_mystuff' and filter='crw_next_maint' and filter='crw_unresolved'"
     }, 
-    "ds_my_next_master_unresolved": {
+    "crw_my_next_master_unresolved": {
         "description": "my unresolved work for next version", 
-        "jql": "filter='ds_mystuff' and filter='ds_next_master' and filter='ds_unresolved'"
+        "jql": "filter='crw_mystuff' and filter='crw_next_master' and filter='crw_unresolved'"
     }, 
-    "ds_needtriage": {
+    "crw_needtriage": {
         "description": "Non triaged stuff", 
-        "jql": "fixVersion is empty and filter='ds_unresolved' and project in (CRW)"
+        "jql": "fixVersion is empty and filter='crw_unresolved' and project = CRW"
     }, 
-    "ds_next_maint_unresolved": {
+    "crw_next_maint_unresolved": {
         "description": "unresolved work for next maintanence", 
-        "jql": "filter='ds_next_maint' and filter='ds_unresolved'"
+        "jql": "filter='crw_next_maint' and filter='crw_unresolved'"
     }, 
-    "ds_next_master_unresolved": {
+    "crw_next_master_unresolved": {
         "description": "unresolved work for next version", 
-        "jql": "filter='ds_next_master' and filter='ds_unresolved'"
+        "jql": "filter='crw_next_master' and filter='crw_unresolved'"
     }
 }

@@ -1,40 +1,33 @@
 {
-    "crw_master_versions": {
+    "crw_fast_versions": {
 	"function": "listVersions",
 	"project": "CRW",
-	"pattern": "2...(?!x).*"
+	"pattern": "3.5.*"
 	},
 
-    "crw_maint_versions": {
+    "crw_stable_versions": {
 	"function": "listVersions",
 	"project": "CRW",
-	"pattern": "1...(?!x).*"
+	"pattern": "3.4.*"
 	},
 
-    "crw_next_maint_versions": {
+    "crw_next_fast_versions": {
 	"function": "listVersions",
 	"project": "CRW",
-	"pattern": "1.2.(?!x).*",
-        "hasStartDate": true,
-	"released": false,
-	"index": 0
-    },
-
-    "crw_next_master_versions": {
-	"function": "listVersions",
-	"project": "CRW",
-	"pattern": "2...(?!x).*",
-        "hasStartDate": true,
+	"pattern": "3.6.(?!x).*",
 	"released": false,
 	"codefrozen": false,
 	"index": 0
     },
 
-    "crw_bucket_versions": {
+    "crw_next_stable_versions": {
 	"function": "listVersions",
 	"project": "CRW",
-	"pattern": ".*.x|LATER"
+	"pattern": "3.4.(?!x).*",
+	"released": false,
+	"index": 0
     },
+
     "crw_bucket_versions": {
 	"function": "listVersions",
 	"project": "CRW",
@@ -44,15 +37,6 @@
     "crw_freeze_versions": {
 	"function": "listVersions",
 	"project": "CRW",
-	"pattern": "1.0.*|1.1.*",
-	"codefrozen": true
-    },
-
-    "crw_latest_freeze_versions": {
-	"function": "listVersions",
-	"project": "CRW",
-	"pattern": "1.0.*|1.1.*",
-	"codefrozen": true,
-	"index" : -1
+	"pattern": "3.4.*|3.3.*|3.2.*|3.1.*|3.0.*"
     }
 }
