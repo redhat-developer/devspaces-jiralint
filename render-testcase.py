@@ -194,7 +194,7 @@ def render(issue_type, issue_description, jira_env, issues, jql, options, email_
         testcase.setAttribute("name", "found.noissues")
         testsuite.appendChild(testcase)
  
-    print('Write to ' + issue_type.lower().replace(" ","") + "-test.xml")
+    print('  Write to ' + issue_type.lower().replace(" ","") + "-test.xml")
     output = open(issue_type.lower().replace(" ","") + "-test.xml", 'w')
     output.write(doc.toprettyxml(indent="  ").encode('utf8', 'replace').decode('utf8'))
 
