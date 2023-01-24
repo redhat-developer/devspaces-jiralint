@@ -24,7 +24,7 @@
     }
   },
   {
-      "Unresolved issue for codefrozen version": {
+    "Unresolved issue for codefrozen version": {
 	  "jql": "filter = 'crw_freeze' and filter = 'crw_unresolved' AND updated <= -2d and (labels not in ('releasework') or labels is empty)",
 	  "description": "This issue is on a release that is codefrozen and no updates for 2 days nor labeled as 'releasework'. Should be triaged."
       }

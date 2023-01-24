@@ -54,7 +54,7 @@ def mailsend (smtphost, from_email, to_email, subject, message, recipients_list,
     msg = header + '\n' + message
     msg = msg.encode('utf8', 'replace')
     if options.verbose:
-        print(msg)
+        print(msg.decode('utf8'))
     if not options.dryrun:
         server = smtplib.SMTP(smtphost, 25)
         server.sendmail(from_email, recipients_list, msg)
@@ -196,7 +196,7 @@ def render(issue_type, issue_description, jira_env, issues, jql, options, email_
  
     print('Write to ' + issue_type.lower().replace(" ","") + "-test.xml")
     output = open(issue_type.lower().replace(" ","") + "-test.xml", 'w')
-    output.write(str(doc.toprettyxml(indent="  ").encode('utf8', 'replace')))
+    output.write(doc.toprettyxml(indent="  ").encode('utf8', 'replace').decode('utf8'))
 
     # send emails & log to file
     log = ''
@@ -208,7 +208,7 @@ def render(issue_type, issue_description, jira_env, issues, jql, options, email_
                 entry = ("Prepare (but do not send)" if options.dryrun else "Send") + " email with " + problem_count + \
                     " issue(s) to: " + (options.toemail + " (not " + assignee_email + ")" if options.toemail else assignee_email)
                 print(entry)
-                log = log + entry + "\n\n"
+                log = log + entry + "\n\n" + options.jiraserver + "/issues/?jql=" + urllib.parse.quote_plus(jql) + "\n\n"
                 message = ''
                 o = urllib.parse.urlparse(v['self'])
                 url = o.scheme + "://" + o.netloc + "/browse/"
@@ -235,7 +235,7 @@ def render(issue_type, issue_description, jira_env, issues, jql, options, email_
     
     if log:
         output = open(issue_type.lower().replace(" ","") + ".log", 'w')
-        output.write(str(log.encode('utf8', 'replace')))
+        output.write(log.encode('utf8', 'replace').decode('utf8'))
 
     return email_addresses
 
@@ -279,18 +279,20 @@ if options.reportfile:
     reports = json.load(open(options.reportfile, 'r'))
 
     for report in reports:
+        print("")
         for issue_type,fields in report.items():
-            print("Check for '"  + issue_type.lower() + "'")
+            if options.verbose:
+                print("Check for '"  + issue_type.lower() + "': https://issues.redhat.com/issues/?jql=" + urllib.parse.quote(fields['jql']))
             payload = {'jql': fields['jql'], 'maxResults' : options.maxresults}
             data = shared.jiraquery(options, "/rest/api/2/search?" + urllib.parse.urlencode(payload))
             if 'issues' in data:
-                print(str(len(data['issues'])) + " issues found with '" + issue_type.lower() + "'")
+                print(str(len(data['issues'])) + " issues found with '" + issue_type.lower() + "': https://issues.redhat.com/issues/?jql=" + urllib.parse.quote(fields['jql']))
                 if options.verbose:
                     print(data)
                     print(options)
-                email_addresses = render(issue_type, fields['description'].encode('utf8','replace'), data, data['issues'], fields['jql'], options, email_addresses, components)
+                email_addresses = render(issue_type, str(fields['description']), data, data['issues'], fields['jql'], options, email_addresses, components)
             else:
-                print("No issues found for \"" + fields['jql'] + "\" - nothing to send")
+                print("No issues found for '"  + issue_type.lower() + "': https://issues.redhat.com/issues/?jql=" + urllib.parse.quote(fields['jql']))
 else:
     print("Generating based on .json found on standard in")
     data = json.load(sys.stdin)
