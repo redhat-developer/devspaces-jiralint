@@ -2,7 +2,7 @@
   {
     "Illegal fix version for resolved issue": {
       "jql": "(filter='crw_lint_illegalfixversion') AND updatedDate >= -720d",
-      "description": "please set a valid fix version for this resolved/closed issue - cannot be blank, LATER, or #.#.x. See http://bit.ly/aTUeGq for help. "
+      "description": "please set a valid fix version for this resolved/closed issue - cannot be blank, LATER, or #.#.x. See https://bit.ly/jiratriage for help. "
     }
   },
   {
@@ -25,7 +25,7 @@
   },
   {
       "Unresolved issue for codefrozen version": {
-	  "jql": "filter = 'crw_freeze' and filter = 'ds_unresolved' AND updated <= -2d and (labels not in ('releasework') or labels is empty)",
+	  "jql": "filter = 'crw_freeze' and filter = 'crw_unresolved' AND updated <= -2d and (labels not in ('releasework') or labels is empty)",
 	  "description": "This issue is on a release that is codefrozen and no updates for 2 days nor labeled as 'releasework'. Should be triaged."
       }
   }
