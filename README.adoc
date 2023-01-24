@@ -43,10 +43,10 @@ For each report, a `*-test.xml` file will be created containing test failures fo
 . To send email for the failures, use these flags:
 +
 ```
-    --fromemail             email address from which to send mail; if omitted, no mail will be sent
-    --toemail               email address override to which to send all mail; if omitted, send to assignees
-    --smtphost              smtp host to use; required if fromemail is specified
-    --unassignedjiraemail   email to use for unassigned JIRAs; required if fromemail is specified
+  -f, --fromemail             email address from which to send mail; if omitted, no mail will be sent
+  -t, --toemail               email address override to which to send all mail; if omitted, send to assignees
+  -m, --smtphost              smtp host to use; required if fromemail is specified
+  -n, --unassignedjiraemail   email to use for unassigned JIRAs; required if fromemail is specified
 ```
 + 
 If sending mail, a `.log` file will be created for each `*-test.xml`.
