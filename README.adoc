@@ -36,6 +36,8 @@ Each entry has a report name used for identifying its results and then a jql for
 $ python jiralint.py -u jirauser -k jiratoken -r reports-<name>.json -l <max num of issues>
 ```
 +
+link:https://gitlab.cee.redhat.com/codeready-workspaces/crw-jenkins/-/blob/master/casc.yaml#L596-601[Username and token are documented here].
++
 For each report, a `*-test.xml` file will be created containing test failures for each jira matching the queries.
 
 . To send email for the failures, use these flags:
