@@ -154,7 +154,7 @@ parser.add_option("-p", "--pwd", dest="jirapwd", help="jirapwd")
 parser.add_option("-k", "--token", dest="jiratoken", help="jiratoken")
 parser.add_option("-s", "--server", dest="jiraserver", default="https://issues.redhat.com", help="Jira instance")
 parser.add_option("-f", "--filters", dest="filterfiles", default="filters.json", help="comma separated list of filters to setup")
-parser.add_option("-v", "--verbose", dest="verbose", action="store_true", help="more verbose logging")
+parser.add_option("-v", "--debug", dest="verbose", action="store_true", help="more verbose logging")
 (options, args) = parser.parse_args()
     
 if (not options.jirauser or (not options.jirapwd and not options.jiratoken)):

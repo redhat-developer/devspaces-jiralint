@@ -250,8 +250,8 @@ parser.add_option("-f", "--fromemail", dest="fromemail", default=None, help="ema
 parser.add_option("-t", "--toemail", dest="toemail", default=None, help="email address override to which to send all mail; if omitted, send to actual JIRA assignees")
 parser.add_option("-n", "--unassignedjiraemail", dest="unassignedjiraemail", default=None, help="email to use for unassigned JIRAs; required if fromemail is specified")
 parser.add_option("-m", "--smtphost", dest="smtphost", default=None, help="smtp host to use; required if fromemail is specified")
-parser.add_option("-d", "--dry-run" "--dryrun", dest="dryrun", action="store_true", help="do everything but actually sending mail")
-parser.add_option("-v", "--verbose", "--debug", dest="verbose", action="store_true", help="dump email bodies to console")
+parser.add_option("-d", "--dryrun", dest="dryrun", action="store_true", help="do everything but actually sending mail")
+parser.add_option("-v", "--debug", dest="verbose", action="store_true", help="dump email bodies to console")
 
 (options, args) = parser.parse_args()
 

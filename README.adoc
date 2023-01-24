@@ -30,7 +30,7 @@ This repo contains utilities that use Jenkins for early warnings/error detection
 + 
 Each entry has a report name used for identifying its results and then a jql for the query and finally a description which is added to each jira "error" message.
   
-. Test it by running with `--verbose` or `-v` and `--dry-run` or `-d`:
+. Test it by running with `--debug` or `-v` and `--dryrun` or `-d`:
 +
 ```
 $ python jiralint.py -u jirauser -k jiratoken -r reports-<name>.json -l <max num of issues>
