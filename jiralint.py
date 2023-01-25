@@ -183,7 +183,7 @@ def render(issue_type, issue_description, jira_env, issues, jql, options, email_
             for name in recipients:
                 if not recipients[name] in emails_to_send:
                     emails_to_send[recipients[name]] = {}
-                emails_to_send[recipients[name]][jira_key] = {'message': subject + '\n' + error_text, 'recipients': name + " <" + recipients[name] + ">"}
+                emails_to_send[recipients[name]][jira_key] = {'issue_summary': str(fields['summary']), 'message': subject + '\n' + error_text, 'recipients': name + " <" + recipients[name] + ">"}
                 #print emails_to_send[recipients[name]][jira_key]
 
     else:
@@ -211,7 +211,7 @@ def render(issue_type, issue_description, jira_env, issues, jql, options, email_
                 o = urllib.parse.urlparse(v['self'])
                 url = o.scheme + "://" + o.netloc + "/browse/"
                 for j, jira_key in enumerate(emails_to_send[assignee_email]):
-                    print(" * " + url + jira_key)
+                    print(" * " + url + jira_key + " - " + emails_to_send[assignee_email][jira_key]['issue_summary'])
                     message = message + emails_to_send[assignee_email][jira_key]['message']
                     log = log + emails_to_send[assignee_email][jira_key]['message']
                     # print emails_to_send[assignee_email][jira_key]['recipients']
